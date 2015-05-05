@@ -9,16 +9,18 @@ define(["require", "exports"], function (require, exports) {
         name: 'cmake',
         mimeTypes: [],
         defaultToken: '',
-        ignoreCase: true,
+        ignoreCase: false,
         lineComment: '#',
         autoClosingPairs: [['{', '}'],
-         //['(', ')'], 
          ['"', '"']],
-      //  keywords: /cmake_minimum_required|message|set|function|endfunction|macro|endmacro|if|elseif|endif|foreach|endforeach|add_executable|add_library|target_link_libraries|target_compile_options|target_compile_definitions|include/,
-        keywords: /if|elseif|endif|foreach|endforeach|include/,
-//       keywords : [
-//           'if', 'endif',           
-//       ],
+       keywords : [
+           'if', 'endif',
+           'foreach', 'endforeach',
+           'function', 'endfunction',
+           'macro', 'endmacro',
+           'include',
+           'set',
+       ],
         brackets: [
          //   { token: 'delimiter.bracket', open: '{', close: '}' },
             { token: 'delimiter.parenthesis', open: '(', close: ')' },
@@ -28,7 +30,7 @@ define(["require", "exports"], function (require, exports) {
         enhancedBrackets: [           
             {
                 openTrigger: '\)',
-                open: /if\((\w+)\)/i,
+                open: /if\((\w*)\)/i,
                 closeComplete: 'endif\($1\)',
                 matchCase: true,
                 closeTrigger: '\)',
@@ -37,7 +39,7 @@ define(["require", "exports"], function (require, exports) {
             },
             {
                 openTrigger: '\)',
-                open: /foreach\((\w+)\)/i,
+                open: /foreach\((\w*)\)/i,
                 closeComplete: 'endforeach\($1\)',
                 matchCase: true,
                 closeTrigger: '\)',
@@ -70,23 +72,19 @@ define(["require", "exports"], function (require, exports) {
         // The main tokenizer for our languages
         tokenizer: {
             root: [
-              //  { include: '@keywords' },
-             //   [/[a-zA-Z@#]\w*/,  cases: { '@keywords': 'keyword' , '@default': ''} ],
-                [/([a-zA-Z@#]\w*)\(/,  'keyword'],
-               // [/[a-zA-Z@#]\w*/, { cases: { '@keywords': 'keyword', '@default': 'keyword' } }],
-              //  [/[a-zA-Z@#]\w*\(/, { cases: { '@keywords': 'keyword', '@default': 'identifier' } }],
-                [/#.*$/, 'comment'],
-               // [/if\(\w+\)/, { token: 'keyword.tag-if', bracket: '@open' }],
-               // [/endif\(\w+\)/, { token: 'keyword.tag-if', bracket: '@close' }],
-                [/[a-zA-Z_]\w*/, ''],
-                [/\$\{[\w ]+\}/, 'variable'],
-                [/@symbols/, 'delimiter'],
+                [/([a-zA-Z_]\w*)(\()/,  [{cases: { '@keywords': { token: 'keyword.$0' } , '@default': 'identifier'}}, '']],
+                [/[a-zA-Z]\w*/, { cases: { '@keywords': 'keyword' , '@default': 'annotation'} }],
+                { include: '@whitespace' },
+                [/\$\{\w+\}/, 'variable'],
                 [/\d*\.\d+([eE][\-+]?\d+)?/, 'number.float'],
                 [/0[xX][0-9a-fA-F_]*[0-9a-fA-F]/, 'number.hex'],
                 [/\d+/, 'number'],
-                [/[;,.]/, 'delimiter'],
                 [/"/, 'string', '@string."'],
                 [/'/, 'string', '@string.\''],
+            ],
+            whitespace: [
+                [/[ \t\r\n]+/, ''],
+                [/#.*$/, 'comment'],
             ],
             string: [
                 [/[^\\"'%]+/, { cases: { '@eos': { token: 'string', next: '@popall' }, '@default': 'string' } }],
@@ -94,7 +92,7 @@ define(["require", "exports"], function (require, exports) {
                 [/\\./, 'string.escape.invalid'],
                 [/\$\{[\w ]+\}/, 'variable'],
                 [/["']/, { cases: { '$#==$S2': { token: 'string', next: '@pop' }, '@default': 'string' } }],
-                //[/$/, 'string', '@popall']
+                [/$/, 'string', '@popall']
             ],
         },
     };
