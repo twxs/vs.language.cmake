@@ -2,6 +2,7 @@
 
 Syntax highlighting for [Cmake](http://www.cmake.org/) in [Visual Studio Code](https://code.visualstudio.com/)
 
+![Screenshot](../blob/master/capture.png?raw=true)
 
 # Installation 
 on Windows, run a console prompt as administrator and create a simlink to the source in the vscode plugins directory
