@@ -20,6 +20,7 @@ define(["require", "exports"], function (require, exports) {
            'macro', 'endmacro',
            'include',
            'set',
+           'project'
        ],
         brackets: [
          //   { token: 'delimiter.bracket', open: '{', close: '}' },
@@ -72,8 +73,8 @@ define(["require", "exports"], function (require, exports) {
         // The main tokenizer for our languages
         tokenizer: {
             root: [
-                [/([a-zA-Z_]\w*)(\()/,  [{cases: { '@keywords': { token: 'keyword.$0' } , '@default': 'identifier'}}, '']],
-                [/[a-zA-Z]\w*/, { cases: { '@keywords': 'keyword' , '@default': 'annotation'} }],
+                [/([a-zA-Z_]\w*)( *\()/,  [{cases: { '@keywords': { token: 'keyword.$0' } , '@default': 'keyword'}}, '']],
+               // [/[a-zA-Z]\w*/, { cases: { '@keywords': 'keyword' , '@default': 'annotation'} }],
                 { include: '@whitespace' },
                 [/\$\{\w+\}/, 'variable'],
                 [/\d*\.\d+([eE][\-+]?\d+)?/, 'number.float'],
