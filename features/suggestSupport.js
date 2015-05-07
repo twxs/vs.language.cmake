@@ -5,17 +5,17 @@
 'use strict';
 
 //
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
+//var __extends = this.__extends || function (d, b) {
+//    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+//    function __() { this.constructor = d; }
+//    __.prototype = b.prototype;
+//    d.prototype = new __();
+//};
 
 define(["require", "exports",  'monaco', './snippets'], function (require, exports, monaco, CMakeSnippets) {
 //define(["require", "exports", './abstractSupport', 'monaco', './snippets'], function (require, exports, AbstractSupport, monaco, CMakeSnippets) {
     var SuggestSupport = (function (_super) {
-        // _super seems to be the default complettion instance
+      
         // we extend it to add specific cmake snippets
         //__extends(SuggestSupport, _super);
         
