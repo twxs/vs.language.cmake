@@ -12,17 +12,20 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 
-define(["require", "exports", 'monaco', './snippets'], function (require, exports, monaco, CMakeSnippets) {
+define(["require", "exports",  'monaco', './snippets'], function (require, exports, monaco, CMakeSnippets) {
+//define(["require", "exports", './abstractSupport', 'monaco', './snippets'], function (require, exports, AbstractSupport, monaco, CMakeSnippets) {
     var SuggestSupport = (function (_super) {
         // _super seems to be the default complettion instance
         // we extend it to add specific cmake snippets
-        __extends(SuggestSupport, _super);
+        //__extends(SuggestSupport, _super);
         
         function SuggestSupport(ctx) {
+            //_super.apply(this, arguments);
             this.modelService = ctx.modelService;
         }
         
         SuggestSupport.prototype.suggest = function (resource, position) {
+            
             var model = this.modelService.getModel(resource);
 
             var versionId = model.getVersionId();
@@ -39,7 +42,7 @@ define(["require", "exports", 'monaco', './snippets'], function (require, export
                     currentWord: word ? word.word.substring(0, position.column - word.startColumn) : '',
                     suggestions: []
             };
-            
+       //     CMakeSnippets.snippets[0].codeSnippet = JSON.stringify(resource);
             ret.suggestions = CMakeSnippets.snippets;
             return [ret];
         };

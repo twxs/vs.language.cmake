@@ -13,7 +13,7 @@ define(["require", "exports", './cmakeDef', 'monaco', './features/suggestSupport
         };
 
         monaco.Modes.registerMonarchDefinition('cmake', cmakeDef.language);
-        monaco.Modes.SuggestSupport.register('cmake', new SuggestSupport(ctx))
+        monaco.Modes.SuggestSupport.register('cmake', new SuggestSupport(ctx));
     }
 
     exports.activate = activate;
