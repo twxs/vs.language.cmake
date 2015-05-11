@@ -9,7 +9,7 @@ on Windows, run a console prompt as administrator and create a simlink to the so
 
 ```
 cd %AppData%/../Local/Code/app-0.1.0/resources/app/plugins
-mklink vs.language.make path_to_cloned_repository
+mklink vs.language.cmake path_to_cloned_repository
 ```
 
 
