@@ -4,8 +4,8 @@
 /// <reference path="../../declares.d.ts" />
 'use strict';
 
-define(["require", "exports", 'vs/base/strings', 'monaco', './snippets'], function (require, exports, strings, monaco, CMakeSnippets) {
-    var ExtraInfoSupport = (function (_super) {
+define(["require", "exports", 'monaco', './snippets'], function (require, exports, monaco, CMakeSnippets) {
+    var ExtraInfoSupport = (function () {
         function ExtraInfoSupport(ctx) {
             this.modelService = ctx.modelService;
         }
