@@ -2,15 +2,13 @@
 
 Experimental extension for [Cmake](http://www.cmake.org/) in [Visual Studio Code](https://code.visualstudio.com/) 0.8.0
 
-![Screenshot](SCREENSHOTS:capture.png)
+![Screenshot](screenshots/capture.png)
 
 ## Features
 * syntax highlighting 
 * code completion 
-* documentation tooltips ![Screenshot](SCREENSHOTS:tooltip.png)
+* documentation tooltips ![Screenshot](screenshots/tooltip.png)
 * code comments 
-
-
 
 
 ## Installation 
