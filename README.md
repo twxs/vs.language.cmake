@@ -1,16 +1,21 @@
 # vs.language.cmake
 
-Syntax highlighting for [Cmake](http://www.cmake.org/) in [Visual Studio Code](https://code.visualstudio.com/)
+Experimental extension for [Cmake](http://www.cmake.org/) in [Visual Studio Code](https://code.visualstudio.com/) 0.8.0
+
+![Screenshot](screenshots/capture.png)
+
+## Features
+* syntax highlighting 
+* code completion 
+* documentation tooltips ![Screenshot](screenshots/tooltip.png)
+* code comments 
 
 
-![Screenshot](capture.png)
-
-# Installation 
+## Installation 
 on Windows, run a console prompt as administrator and create a simlink to the source in the vscode plugins directory
 
 ```
-cd %LocalAppData%/Code/app-0.3.0/resources/app/plugins
-mklink vs.language.cmake path_to_cloned_repository
+mklink "%programfiles(x86)%/Microsoft VS Code/resources/app/plugins/vs.language.cmake" path_to_cloned_repository
 ```
 
 
