@@ -6,8 +6,8 @@
 
 define(["require", "exports", 'monaco', './snippets'], function (require, exports, monaco, CMakeSnippets) {
     var ExtraInfoSupport = (function () {
-        function ExtraInfoSupport(ctx) {
-            this.modelService = ctx.modelService;
+        function ExtraInfoSupport(modelService) {
+            this.modelService = modelService;
         }
 
         ExtraInfoSupport.prototype.computeInfo = function (resource, position) {
@@ -31,7 +31,7 @@ define(["require", "exports", 'monaco', './snippets'], function (require, export
                 _doc = '+' + found[0].documentationLabel;
                 _type = found[0].type + ' : ' + word.word;
             }else {
-                return null;
+                return Promise.resolve(null);
             }
             var ret = {
                 value: '',
@@ -42,10 +42,11 @@ define(["require", "exports", 'monaco', './snippets'], function (require, export
                     { className: 'documentation', text: _doc }
                 ]
             };
-            return ret;
+            return Promise.resolve(ret);
 
         };
         return ExtraInfoSupport;
     })();
-    return ExtraInfoSupport;
+    exports.ExtraInfoSupport = ExtraInfoSupport;
+
 });
