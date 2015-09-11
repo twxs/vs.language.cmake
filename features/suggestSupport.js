@@ -1,27 +1,12 @@
-/*---------------------------------------------------------
- * Copyright (C) Microsoft Corporation. All rights reserved.
- *--------------------------------------------------------*/
-/// <reference path="../../declares.d.ts" />
 'use strict';
 
-//
-//var __extends = this.__extends || function (d, b) {
-//    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-//    function __() { this.constructor = d; }
-//    __.prototype = b.prototype;
-//    d.prototype = new __();
-//};
-
-define(["require", "exports",  'monaco', './snippets'], function (require, exports, monaco, CMakeSnippets) {
-//define(["require", "exports", './abstractSupport', 'monaco', './snippets'], function (require, exports, AbstractSupport, monaco, CMakeSnippets) {
-    var SuggestSupport = (function (_super) {
-      
-        // we extend it to add specific cmake snippets
-        //__extends(SuggestSupport, _super);
-        
-        function SuggestSupport(ctx) {
-            //_super.apply(this, arguments);
-            this.modelService = ctx.modelService;
+define(["require", "exports",  './snippets'], function (require, exports, CMakeSnippets) {
+    var SuggestSupport = (function () {
+       
+        function SuggestSupport(modelService) {
+            this.triggerCharacters = [];
+            this.excludeTokens = [];
+            this.modelService = modelService;
         }
         
         SuggestSupport.prototype.suggest = function (resource, position) {
@@ -31,7 +16,7 @@ define(["require", "exports",  'monaco', './snippets'], function (require, expor
             var versionId = model.getVersionId();
             
             if (versionId !== model.getVersionId()) {
-                return [ret];
+                return  Promise.resolve([ret]);
             }
 
             // Need to capture the word at position before we send the request.
@@ -44,9 +29,9 @@ define(["require", "exports",  'monaco', './snippets'], function (require, expor
             };
        //     CMakeSnippets.snippets[0].codeSnippet = JSON.stringify(resource);
             ret.suggestions = CMakeSnippets.snippets;
-            return [ret];
+            return Promise.resolve( [ret]);
         };
         return SuggestSupport;
     })();
-    return SuggestSupport;
+    exports.SuggestSupport = SuggestSupport;
 });

@@ -1,19 +1,20 @@
 {
 	"pluginId": "vs.language.cmake",
 	"activationEvents": ["textModel:cmake"],
-	"mainModule": "./cmakeMain",
+	"mainModule": "./out/cmakeMain",
 	"contributes": {
 		"language": [{
 			"id": "cmake",
-			"extensions": [ ".cmake", "CMakeLists.txt"],
+			"extensions": [ ".cmake"],
+			"filenames": [ "CMakeLists.txt" ],
 			"aliases": [ "CMake", "cmake" ]
 		}]
 	},
 	"scripts": {
-		"compile": "node ../../node_modules/gulp/bin/gulp.js --gulpfile ../gulpfile.js compile --dir vs.language.cmake"
+		"compile": "node ../../node_modules/gulp/bin/gulp.js --gulpfile ../../gulpfile.plugins.js compile-plugin:vs.language.cmake"
 	},
 	//"_testing": "./tests/cmakeTests",
 	"_bundling": [
-		{ "name": "./cmakeMain" }
+		{ "name": "./out/cmakeMain" }
 	]
 }
