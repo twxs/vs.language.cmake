@@ -1,0 +1,37 @@
+{
+	"name": "vs.language.cmake",
+	"version": "0.0.1",
+	"publisher": "twxs",
+	"description": "CMake language support for vscode",
+	"author": {
+		"name": "Nicolas Martin"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/twxs/vs.language.cmake.git"
+	},
+	"license" : "MIT",
+	"activationEvents": [
+		"onLanguage:cmake"
+	],
+	"devDependencies": {
+		"typescript": "^1.6.2",
+		"vscode": "*"
+	},
+	"engines": {
+		"vscode": "*"
+	},
+	"main": "./out/extension",
+	"contributes": {
+		"languages": [{
+			"id": "cmake",
+			"extensions": [ ".cmake", "CMakeLists.txt"],
+			"filenames": [ "CMakelists.txt" ],
+			"aliases": [ "CMake" ]
+		}]
+	},
+	"scripts": {
+		"prepublish": "tsc"	,
+		"compile": "node ./node_modules/vscode/bin/compile -watch -p ./"
+	}
+}

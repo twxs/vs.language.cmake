@@ -1,0 +1,14 @@
+.vscode/**
+typings/**
+**/*.ts
+**/*.map
+.gitignore
+tsconfig.json
+vsc-extension-quickstart.md
+npm-debug.log
+screenshots/**
+typings/**/*
+.vscode/**/*
+tsconfig.json
+.gitignore
+
