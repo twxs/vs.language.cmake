@@ -17,11 +17,11 @@ function strEquals(word, pattern) {
 
 let cmake = (args: string[]): Promise<string> => {
     return new Promise(function(resolve, reject){
-        let cmd = child_process.spawn('cmake', args);
+        let cmd = child_process.spawn('cmake', args.map(arg=>{return arg.replace(/\r/gm, '');}));
         let stdout : string = '';
         cmd.stdout.on('data', function(data) {    
             var txt: string = data.toString('utf8');
-            stdout += txt;
+            stdout += txt.replace(/\r/gm, '');
         });
         cmd.on("error", function(error) {
             reject();
@@ -115,8 +115,6 @@ class CMakeService {
     
      
 }
-
-var shell = require('shell');
 
 // this method is called when your extension is activated. activation is
 // controlled by the activation events defined in package.json
