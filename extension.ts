@@ -116,35 +116,37 @@ class CMakeService {
      
 }
 
+var shell = require('shell');
 
 // this method is called when your extension is activated. activation is
 // controlled by the activation events defined in package.json
 export function activate(disposables: Disposable[]) {
-console.log('Congratulations, your extension "hello" is now active!');
 
     commands.registerCommand('cmake.onlineHelp', () => {
         // The code you place here will be executed every time your command is executed
-        console.log('yoyo');
         // Display a message box to the user
         var editor = window.getActiveTextEditor();
         if (!editor) {
             return; // No open text editor
         }
 
-        var selection = editor.getSelection();
-        var text = editor.getTextDocument().getTextInRange(selection);
+        // var selection = editor.getSelection();
+        // var text = editor.getTextDocument().getTextInRange(selection);
+        // shell.openExternal('https://github.com');
+    //   let channel = window.getOutputChannel('CMake');
+    //  channel.reveal();
+    //  channel.appendLine('Hello From Cmake Extension');
+    //  channel.appendLine('#Hello From Cmake Extension');
+    //  channel.appendLine('#Hello <b>From</b> Cmake Extension');
+    //  channel.appendLine('http://www.google.fr');
 
         // Display a message box to the user
-        window.showInformationMessage('Selected characters: ' + text.length);
+        //window.showInformationMessage('Selected characters: ' + text.length);
     });
     
      
-    // let channel =window.getOutputChannel('Tasks');
-    // channel.reveal();
-    // channel.appendLine('Hello From Cmake Extension');
-    //let shell = require( 'shell');
-
-    //shell.openExternal('https://www.google.com');
+   
+    
     Modes.registerMonarchDefinition('cmake', new CMakeLanguageDef());
 
     Modes.SuggestSupport.register('cmake', new CMakeSuggestionSupport());

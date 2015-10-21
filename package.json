@@ -1,6 +1,6 @@
 {
 	"name": "cmake",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"publisher": "twxs",
 	"description": "CMake language support for vscode",
 	"author": {
