@@ -1,5 +1,5 @@
 {
-	"name": "vs.language.cmake",
+	"name": "cmake",
 	"version": "0.0.1",
 	"publisher": "twxs",
 	"description": "CMake language support for vscode",
@@ -17,6 +17,7 @@
 	"devDependencies": {
 		"typescript": "^1.6.2",
 		"vscode": "*"
+		
 	},
 	"engines": {
 		"vscode": "*"
@@ -25,10 +26,14 @@
 	"contributes": {
 		"languages": [{
 			"id": "cmake",
-			"extensions": [ ".cmake", "CMakeLists.txt"],
+			"extensions": [ ".cmake"],
 			"filenames": [ "CMakelists.txt" ],
 			"aliases": [ "CMake" ]
-		}]
+		}],
+		"commands": [{
+            "command": "cmake.onlineHelp",
+            "title": "CMake: Help"
+        }]
 	},
 	"scripts": {
 		"prepublish": "tsc"	,

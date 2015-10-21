@@ -11,4 +11,6 @@ typings/**/*
 .vscode/**/*
 tsconfig.json
 .gitignore
+node_modules/.bin/**
+node_modules/typescript/**
 

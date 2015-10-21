@@ -4,6 +4,17 @@ import {workspace, window, languages, Modes, TextDocument, Position, commands, D
 import util  = require('util');
 import child_process = require("child_process");
 
+/// strings Helpers
+function strContains(word, pattern) {
+    return word.indexOf(pattern) >-1;
+}
+
+function strEquals(word, pattern) {
+    return word == pattern;
+}
+
+/// Cmake process helpers
+
 let cmake = (args: string[]): Promise<string> => {
     return new Promise(function(resolve, reject){
         let cmd = child_process.spawn('cmake', args);
@@ -21,13 +32,7 @@ let cmake = (args: string[]): Promise<string> => {
     });
 }
 
-function strContains(word, pattern) {
-    return word.indexOf(pattern) >-1;
-}
 
-function strEquals(word, pattern) {
-    return word == pattern;
-}
 
 
 class CMakeService {      
@@ -115,14 +120,38 @@ class CMakeService {
 // this method is called when your extension is activated. activation is
 // controlled by the activation events defined in package.json
 export function activate(disposables: Disposable[]) {
+console.log('Congratulations, your extension "hello" is now active!');
 
-    Modes.registerMonarchDefinition('cmake', new CMakeLanguageDef() );
+    commands.registerCommand('cmake.onlineHelp', () => {
+        // The code you place here will be executed every time your command is executed
+        console.log('yoyo');
+        // Display a message box to the user
+        var editor = window.getActiveTextEditor();
+        if (!editor) {
+            return; // No open text editor
+        }
+
+        var selection = editor.getSelection();
+        var text = editor.getTextDocument().getTextInRange(selection);
+
+        // Display a message box to the user
+        window.showInformationMessage('Selected characters: ' + text.length);
+    });
+    
+     
+    // let channel =window.getOutputChannel('Tasks');
+    // channel.reveal();
+    // channel.appendLine('Hello From Cmake Extension');
+    //let shell = require( 'shell');
+
+    //shell.openExternal('https://www.google.com');
+    Modes.registerMonarchDefinition('cmake', new CMakeLanguageDef());
 
     Modes.SuggestSupport.register('cmake', new CMakeSuggestionSupport());
 
     Modes.ExtraInfoSupport.register('cmake', new CMakeExtraInfoSupport());
 
-   
+
 }
 
 // Show Tooltip on mouse over
@@ -150,7 +179,6 @@ class CMakeExtraInfoSupport implements Modes.IExtraInfoSupport {
     public computeInfo(document: TextDocument, position: Position, token: CancellationToken) /*: Thenable<IComputeExtraInfoResult>*/ {
         let range = document.getWordRangeAtPosition(position);
         let value = document.getTextInRange(range);
-        var that = this;
         let promises = {
             'function' : (name : string)=>{ 
                 let service = new CMakeService();
@@ -178,6 +206,9 @@ class CMakeExtraInfoSupport implements Modes.IExtraInfoSupport {
             propertiesSuggestionsExact(value),
         ]).then(function(results){
              var suggestions = Array.prototype.concat.apply([], results);
+             if(suggestions.length == 0) {
+                 return null;
+             }
              let suggestion = suggestions[0];
              
             return promises[suggestion.type](suggestion.label).then(function(result:string){    
@@ -204,7 +235,7 @@ class CMakeExtraInfoSupport implements Modes.IExtraInfoSupport {
   function suggestionsHelper(cmake_cmd, currentWord: string, type:string, suffix:string, matchPredicate) {
          return new Promise(function(resolve, reject) {
             cmake_cmd.then(function(stdout: string) {
-                let commands = stdout.split('\r\n').filter(function(v){return matchPredicate(v, currentWord)});
+                let commands = stdout.split('\n').filter(function(v){return matchPredicate(v, currentWord)});
                 if(commands.length>0) {
                     let suggestions = commands.map(function(command_name){
                         return {
@@ -288,8 +319,6 @@ class CMakeSuggestionSupport implements Modes.ISuggestSupport {
         }
         
         return new Promise(function(resolve, reject) {
-            let cmds = commandsSuggestions(currentWord);
-            let vars = variablesSuggestions(currentWord);
             Promise.all([
                 commandsSuggestions(currentWord),
                 variablesSuggestions(currentWord),
