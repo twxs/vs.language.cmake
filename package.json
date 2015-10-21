@@ -1,8 +1,8 @@
 {
 	"name": "cmake",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"publisher": "twxs",
-	"description": "CMake language support for vscode",
+	"description": "CMake support for Visual Studio Code",
 	"author": {
 		"name": "Nicolas Martin"
 	},
