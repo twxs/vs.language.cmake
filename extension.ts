@@ -374,7 +374,7 @@ class CMakeLanguageDef {
             ['{', '}'],
             ['"', '"']];
        public keywords :string[] = [
-           'if', 'endif',
+           'if', 'endif', 'else',
            'foreach', 'endforeach',
            'function', 'endfunction',
            'macro', 'endmacro',
