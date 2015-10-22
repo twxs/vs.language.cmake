@@ -127,19 +127,13 @@ export function activate(disposables: Disposable[]) {
         if (!editor) {
             return; // No open text editor
         }
-
-        // var selection = editor.getSelection();
-        // var text = editor.getTextDocument().getTextInRange(selection);
-        // shell.openExternal('https://github.com');
-    //   let channel = window.getOutputChannel('CMake');
-    //  channel.reveal();
-    //  channel.appendLine('Hello From Cmake Extension');
-    //  channel.appendLine('#Hello From Cmake Extension');
-    //  channel.appendLine('#Hello <b>From</b> Cmake Extension');
-    //  channel.appendLine('http://www.google.fr');
-
-        // Display a message box to the user
-        //window.showInformationMessage('Selected characters: ' + text.length);
+        var selection = editor.getSelection();
+        var text = editor.getTextDocument().getTextInRange(selection);
+        window.showInputBox({prompt: 'Search on Cmake online documentation', placeHolder:text}).then(function(result){
+          var opener = require("opener");
+ 
+          opener('https://cmake.org/cmake/help/latest/search.html?q='+ result +'&check_keywords=yes&area=default');
+        });
     });
     
      

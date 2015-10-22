@@ -1,6 +1,6 @@
 {
 	"name": "cmake",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"publisher": "twxs",
 	"description": "CMake support for Visual Studio Code",
 	"author": {
@@ -16,8 +16,8 @@
 	],
 	"devDependencies": {
 		"typescript": "^1.6.2",
-		"vscode": "*"
-		
+		"vscode": "*",
+		"opener": "*"		
 	},
 	"engines": {
 		"vscode": "*"
