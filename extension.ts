@@ -6,20 +6,24 @@ import child_process = require("child_process");
 
 /// strings Helpers
 function strContains(word, pattern) {
-    return word.indexOf(pattern) >-1;
+    return word.indexOf(pattern) > -1;
 }
 
 function strEquals(word, pattern) {
     return word == pattern;
 }
 
+
+
 /// Cmake process helpers
 
+// Simple helper function that invoke the CMAKE executable
+// and return a promise with stdout
 let cmake = (args: string[]): Promise<string> => {
-    return new Promise(function(resolve, reject){
-        let cmd = child_process.spawn('cmake', args.map(arg=>{return arg.replace(/\r/gm, '');}));
-        let stdout : string = '';
-        cmd.stdout.on('data', function(data) {    
+    return new Promise(function(resolve, reject) {
+        let cmd = child_process.spawn('cmake', args.map(arg=> { return arg.replace(/\r/gm, ''); }));
+        let stdout: string = '';
+        cmd.stdout.on('data', function(data) {
             var txt: string = data.toString('utf8');
             stdout += txt.replace(/\r/gm, '');
         });
@@ -35,85 +39,124 @@ let cmake = (args: string[]): Promise<string> => {
 
 
 
-class CMakeService {      
-    public cmake_help_command_list = () : Promise<string> => {
-        return cmake(['--help-command-list']);
-    }
-    
-    public cmake_help_command = (name:string) : Promise<string> => {
-             return this.cmake_help_command_list()
-             .then(function(result:string){
-                 let contains = result.indexOf(name)>-1 ;
-                 return new Promise(function(resolve, reject) {
-                     if(contains) {
-                         resolve(name);
-                     }else {
-                         reject('not found');//resolve('');
-                     }
-                 }); 
-             }, function(e){})
-             .then(function(n:string){
-                 return cmake(['--help-command', n]);
-                }, null);
-    }
-  
-    
-    public cmake_help_variable_list = () : Promise<string> => {
-        return cmake(['--help-variable-list']);
-    }
-    
-    public cmake_help_variable = (name:string) : Promise<string> =>{
-        return this.cmake_help_variable_list()
-             .then(function(result:string){
-                 let contains = result.indexOf(name)>-1 ;
-                 return new Promise(function(resolve, reject) {
-                     if(contains) {
-                         resolve(name);
-                     }else {
-                         reject('note found');
-                     }
-                 });
-             }, function(e){}).then(function(name:string){return cmake(['--help-variable', name]);}, null);
-    }
-    
-    
-    public cmake_help_property_list = () : Promise<string> => {
-        return cmake(['--help-property-list']);
-    }
-    
-    public cmake_help_property = (name:string) : Promise<string> =>{
-        return this.cmake_help_variable_list()
-             .then(function(result:string){
-                 let contains = result.indexOf(name)>-1 ;
-                 return new Promise(function(resolve, reject) {
-                     if(contains) {
-                         resolve(name);
-                     }else {
-                         reject('note found');
-                     }
-                 });
-             }, function(e){}).then(function(name:string){return cmake(['--help-property', name]);}, null);
-    }
-    
-    public cmake_help_module_list = () : Promise<string> => {
-        return cmake(['--help-module-list']);
-    }
-    
-    public cmake_help_module = (name:string) : Promise<string> =>{
-        return this.cmake_help_variable_list()
-             .then(function(result:string){
-                 let contains = result.indexOf(name)>-1 ;
-                 return new Promise(function(resolve, reject) {
-                     if(contains) {
-                         resolve(name);
-                     }else {
-                         reject('note found');
-                     }
-                 });
-             }, function(e){}).then(function(name:string){return cmake(['--help-module', name]);}, null);
-    }
-    
-     
+// return the cmake command list
+function cmake_help_command_list(): Promise<string> {
+    return cmake(['--help-command-list']);
+}
+
+function cmake_help_command(name: string): Promise<string> {
+    return cmake_help_command_list()
+        .then(function(result: string) {
+            let contains = result.indexOf(name) > -1;
+            return new Promise(function(resolve, reject) {
+                if (contains) {
+                    resolve(name);
+                } else {
+                    reject('not found');
+                }
+            });
+        }, function(e) { })
+        .then(function(n: string) {
+            return cmake(['--help-command', n]);
+        }, null);
+}
+
+
+function cmake_help_variable_list(): Promise<string> {
+    return cmake(['--help-variable-list']);
+}
+
+function cmake_help_variable(name: string): Promise<string> {
+    return cmake_help_variable_list()
+        .then(function(result: string) {
+            let contains = result.indexOf(name) > -1;
+            return new Promise(function(resolve, reject) {
+                if (contains) {
+                    resolve(name);
+                } else {
+                    reject('note found');
+                }
+            });
+        }, function(e) { }).then(function(name: string) { return cmake(['--help-variable', name]); }, null);
+}
+
+
+function cmake_help_property_list(): Promise<string> {
+    return cmake(['--help-property-list']);
+}
+
+function cmake_help_property(name: string): Promise<string> {
+    return cmake_help_variable_list()
+        .then(function(result: string) {
+            let contains = result.indexOf(name) > -1;
+            return new Promise(function(resolve, reject) {
+                if (contains) {
+                    resolve(name);
+                } else {
+                    reject('note found');
+                }
+            });
+        }, function(e) { }).then(function(name: string) { return cmake(['--help-property', name]); }, null);
+}
+
+function cmake_help_module_list(): Promise<string> {
+    return cmake(['--help-module-list']);
+}
+
+function cmake_help_module(name: string): Promise<string> {
+    return cmake_help_variable_list()
+        .then(function(result: string) {
+            let contains = result.indexOf(name) > -1;
+            return new Promise(function(resolve, reject) {
+                if (contains) {
+                    resolve(name);
+                } else {
+                    reject('note found');
+                }
+            });
+        }, function(e) { }).then(function(name: string) { return cmake(['--help-module', name]); }, null);
+}    
+
+function cmake_help_all() {
+    let promises = {
+        'function': (name: string) => {
+            return cmake_help_command(name);
+        },
+        'module': (name: string) => {
+            return cmake_help_module(name);
+        },
+        'variable': (name: string) => {
+            return cmake_help_variable(name);
+        }
+        ,
+        'property': (name: string) => {
+            return cmake_help_property(name);
+        }
+    };
+    return promises;
+}
+
+function cmake_online_help(search:string) {
+    return Promise.all([
+            cmCommandsSuggestionsExact(search),
+            cmVariablesSuggestionsExact(search),
+            cmModulesSuggestionsExact(search),
+            cmPropertiesSuggestionsExact(search),
+        ]).then(function(results){
+             var opener = require("opener");
+            
+             var suggestions = Array.prototype.concat.apply([], results);
+             if(suggestions.length == 0) {
+                opener('https://cmake.org/cmake/help/latest/search.html?q='+ search +'&check_keywords=yes&area=default');
+             }else {
+                let suggestion = suggestions[0];
+                let type = suggestion.type;
+                if(type == 'function') {
+                    type = 'command';
+                }
+                opener('https://cmake.org/cmake/help/latest/' + type + '/' + search + '.html'); 
+             }
+        });
 }
 
 // this method is called when your extension is activated. activation is
@@ -128,11 +171,20 @@ export function activate(disposables: Disposable[]) {
             return; // No open text editor
         }
         var selection = editor.getSelection();
-        var text = editor.getTextDocument().getTextInRange(selection);
-        window.showInputBox({prompt: 'Search on Cmake online documentation', placeHolder:text}).then(function(result){
-          var opener = require("opener");
- 
-          opener('https://cmake.org/cmake/help/latest/search.html?q='+ result +'&check_keywords=yes&area=default');
+        let document = editor.getTextDocument(); 
+        let position = selection.start;
+        var currentWord = document.getTextInRange(selection);
+        let wordAtPosition = document.getWordRangeAtPosition(position);
+        
+        var currentWord = '';
+        
+        if (wordAtPosition && wordAtPosition.start.character < position.character) {
+            var word = document.getTextInRange(wordAtPosition);
+            currentWord =word;// word.substr(0, position.character - wordAtPosition.start.character);
+        }
+        
+        window.showInputBox({prompt: 'Search on Cmake online documentation', placeHolder:currentWord}).then(function(result){         
+            cmake_online_help(currentWord);
         });
     });
     
@@ -173,31 +225,13 @@ class CMakeExtraInfoSupport implements Modes.IExtraInfoSupport {
     public computeInfo(document: TextDocument, position: Position, token: CancellationToken) /*: Thenable<IComputeExtraInfoResult>*/ {
         let range = document.getWordRangeAtPosition(position);
         let value = document.getTextInRange(range);
-        let promises = {
-            'function' : (name : string)=>{ 
-                let service = new CMakeService();
-                return service.cmake_help_command(name);
-            },
-            'module' : (name : string)=>{ 
-                let service = new CMakeService();
-                return service.cmake_help_module(name);
-            },
-            'variable' : (name : string)=>{ 
-                let service = new CMakeService();
-                return service.cmake_help_variable(name);
-            }
-            ,
-            'property' : (name : string)=>{ 
-                let service = new CMakeService();
-                return service.cmake_help_property(name);
-            }
-        };
+        let promises = cmake_help_all();
         
         return Promise.all([
-            commandsSuggestionsExact(value),
-            variablesSuggestionsExact(value),
-            modulesSuggestionsExact(value),
-            propertiesSuggestionsExact(value),
+            cmCommandsSuggestionsExact(value),
+            cmVariablesSuggestionsExact(value),
+            cmModulesSuggestionsExact(value),
+            cmPropertiesSuggestionsExact(value),
         ]).then(function(results){
              var suggestions = Array.prototype.concat.apply([], results);
              if(suggestions.length == 0) {
@@ -249,53 +283,45 @@ class CMakeExtraInfoSupport implements Modes.IExtraInfoSupport {
         });
     }
 
-  function commandsSuggestions(currentWord: string) {
-      let service = new CMakeService();
-      let cmd = service.cmake_help_command_list();
+  function cmCommandsSuggestions(currentWord: string) {
+      let cmd = cmake_help_command_list();
       return suggestionsHelper(cmd, currentWord, 'function', '({{}})', strContains);
   }
 
-  function variablesSuggestions(currentWord: string) {
-      let service = new CMakeService();
-      let cmd = service.cmake_help_variable_list();
+  function cmVariablesSuggestions(currentWord: string) {
+      let cmd = cmake_help_variable_list();
       return suggestionsHelper(cmd, currentWord, 'variable', '', strContains);
   }
 
 
-  function propertiesSuggestions(currentWord: string) {
-      let service = new CMakeService();
-      let cmd = service.cmake_help_property_list();
+  function cmPropertiesSuggestions(currentWord: string) {
+      let cmd = cmake_help_property_list();
       return suggestionsHelper(cmd, currentWord, 'property', '', strContains);
   }
 
-  function modulesSuggestions(currentWord: string) {
-      let service = new CMakeService();
-      let cmd = service.cmake_help_module_list();
+  function cmModulesSuggestions(currentWord: string) {
+      let cmd = cmake_help_module_list();
       return suggestionsHelper(cmd, currentWord, 'module', '', strContains);
   }
     
-  function commandsSuggestionsExact(currentWord: string) {
-      let service = new CMakeService();
-      let cmd = service.cmake_help_command_list();
+  function cmCommandsSuggestionsExact(currentWord: string) {
+      let cmd = cmake_help_command_list();
       return suggestionsHelper(cmd, currentWord, 'function', '({{}})', strEquals);
   }
 
-  function variablesSuggestionsExact(currentWord: string) {
-      let service = new CMakeService();
-      let cmd = service.cmake_help_variable_list();
+  function cmVariablesSuggestionsExact(currentWord: string) {
+      let cmd = cmake_help_variable_list();
       return suggestionsHelper(cmd, currentWord, 'variable', '', strEquals);
   }
 
 
-  function propertiesSuggestionsExact(currentWord: string) {
-      let service = new CMakeService();
-      let cmd = service.cmake_help_property_list();
+  function cmPropertiesSuggestionsExact(currentWord: string) {
+      let cmd = cmake_help_property_list();
       return suggestionsHelper(cmd, currentWord, 'property', '', strEquals);
   }
 
-  function modulesSuggestionsExact(currentWord: string) {
-      let service = new CMakeService();
-      let cmd = service.cmake_help_module_list();
+  function cmModulesSuggestionsExact(currentWord: string) {
+      let cmd = cmake_help_module_list();
       return suggestionsHelper(cmd, currentWord, 'module', '', strEquals);
   }
     
@@ -314,10 +340,10 @@ class CMakeSuggestionSupport implements Modes.ISuggestSupport {
         
         return new Promise(function(resolve, reject) {
             Promise.all([
-                commandsSuggestions(currentWord),
-                variablesSuggestions(currentWord),
-                propertiesSuggestions(currentWord),
-                modulesSuggestions(currentWord)
+                cmCommandsSuggestions(currentWord),
+                cmVariablesSuggestions(currentWord),
+                cmPropertiesSuggestions(currentWord),
+                cmModulesSuggestions(currentWord)
             ]).then(function(results){
                 var suggestions = Array.prototype.concat.apply([], results);
                 resolve([{
@@ -328,25 +354,7 @@ class CMakeSuggestionSupport implements Modes.ISuggestSupport {
     }
    
     public getSuggestionDetails(document: TextDocument, position: Position, suggestion:Modes.ISuggestion, token: CancellationToken) {
-        let promises = {
-            'function' : (name : string)=>{ 
-                let service = new CMakeService();
-                return service.cmake_help_command(name);
-            },
-            'module' : (name : string)=>{ 
-                let service = new CMakeService();
-                return service.cmake_help_module(name);
-            },
-            'variable' : (name : string)=>{ 
-                let service = new CMakeService();
-                return service.cmake_help_variable(name);
-            }
-            ,
-            'property' : (name : string)=>{ 
-                let service = new CMakeService();
-                return service.cmake_help_property(name);
-            }
-        };
+        let promises = cmake_help_all();
         return promises[suggestion.type](suggestion.label).then(function(result:string){            
             suggestion.documentationLabel = result.split('\n')[3];
             return suggestion;

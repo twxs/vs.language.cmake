@@ -1,6 +1,6 @@
 {
 	"name": "cmake",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"publisher": "twxs",
 	"description": "CMake support for Visual Studio Code",
 	"author": {
@@ -32,7 +32,7 @@
 		}],
 		"commands": [{
             "command": "cmake.onlineHelp",
-            "title": "CMake: Help"
+            "title": "CMake: Online Help"
         }]
 	},
 	"scripts": {
