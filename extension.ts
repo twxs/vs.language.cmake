@@ -1,6 +1,6 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import {workspace, window, languages, Modes, TextDocument, Position, commands, Disposable, CancellationToken} from 'vscode';
+import {workspace, window, languages, TextDocument, DocumentFilter, Position, commands,LanguageConfiguration, CompletionItemKind, CompletionItem, CompletionItemProvider, Hover, HoverProvider, Disposable, CancellationToken} from 'vscode';
 import util  = require('util');
 import child_process = require("child_process");
 
@@ -74,7 +74,7 @@ function cmake_help_variable(name: string): Promise<string> {
                 if (contains) {
                     resolve(name);
                 } else {
-                    reject('note found');
+                    reject('not found');
                 }
             });
         }, function(e) { }).then(function(name: string) { return cmake(['--help-variable', name]); }, null);
@@ -93,7 +93,7 @@ function cmake_help_property(name: string): Promise<string> {
                 if (contains) {
                     resolve(name);
                 } else {
-                    reject('note found');
+                    reject('not found');
                 }
             });
         }, function(e) { }).then(function(name: string) { return cmake(['--help-property', name]); }, null);
@@ -111,7 +111,7 @@ function cmake_help_module(name: string): Promise<string> {
                 if (contains) {
                     resolve(name);
                 } else {
-                    reject('note found');
+                    reject('not found');
                 }
             });
         }, function(e) { }).then(function(name: string) { return cmake(['--help-module', name]); }, null);
@@ -150,7 +150,7 @@ function cmake_online_help(search:string) {
                 opener('https://cmake.org/cmake/help/latest/search.html?q='+ search +'&check_keywords=yes&area=default');
              }else {
                 let suggestion = suggestions[0];
-                let type = suggestion.type;
+                let type = cmakeTypeFromvscodeKind(suggestion.kind);
                 if(type == 'function') {
                     type = 'command';
                 }
@@ -166,20 +166,20 @@ export function activate(disposables: Disposable[]) {
     commands.registerCommand('cmake.onlineHelp', () => {
         // The code you place here will be executed every time your command is executed
         // Display a message box to the user
-        var editor = window.getActiveTextEditor();
+        var editor = window.activeTextEditor;
         if (!editor) {
             return; // No open text editor
         }
-        var selection = editor.getSelection();
-        let document = editor.getTextDocument(); 
+        var selection = editor.selection;
+        let document = editor.document; 
         let position = selection.start;
-        var currentWord = document.getTextInRange(selection);
+        var currentWord = document.getText(selection);
         let wordAtPosition = document.getWordRangeAtPosition(position);
         
         var currentWord = '';
         
         if (wordAtPosition && wordAtPosition.start.character < position.character) {
-            var word = document.getTextInRange(wordAtPosition);
+            var word = document.getText(wordAtPosition);
             currentWord =word;// word.substr(0, position.character - wordAtPosition.start.character);
         }
         
@@ -188,43 +188,50 @@ export function activate(disposables: Disposable[]) {
         });
     });
     
-     
-   
+    const CMAKE_MODE: DocumentFilter = { language: 'cmake', scheme: 'file' }
+    languages.registerHoverProvider('cmake', new CMakeExtraInfoSupport());
+    languages.registerCompletionItemProvider('cmake', new CMakeSuggestionSupport());
     
-    Modes.registerMonarchDefinition('cmake', new CMakeLanguageDef());
+    languages.setLanguageConfiguration(CMAKE_MODE.language, {
+		indentationRules: {
+			// ^(.*\*/)?\s*\}.*$
+			decreaseIndentPattern: /^(.*\*\/)?\s*\}.*$/,
+			// ^.*\{[^}"']*$
+			increaseIndentPattern: /^.*\{[^}"']*$/
+		},
+		wordPattern: /(-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g,
+		comments: {
+			lineComment: '#'
+		},
+		brackets: [
+			['{', '}'],
+			['(', ')'],
+		],
 
-    Modes.SuggestSupport.register('cmake', new CMakeSuggestionSupport());
+		__electricCharacterSupport: {
+			brackets: [
+				{ tokenType:'delimiter.curly.ts', open: '{', close: '}', isElectric: true },
+				{ tokenType:'delimiter.square.ts', open: '[', close: ']', isElectric: true },
+				{ tokenType:'delimiter.paren.ts', open: '(', close: ')', isElectric: true }
+			]
+		},
 
-    Modes.ExtraInfoSupport.register('cmake', new CMakeExtraInfoSupport());
-
-
+		__characterPairSupport: {
+			autoClosingPairs: [
+				{ open: '{', close: '}' },
+				{ open: '(', close: ')' },
+				{ open: '"', close: '"', notIn: ['string'] },
+			]
+		}
+    });
 }
 
 // Show Tooltip on mouse over
-class CMakeExtraInfoSupport implements Modes.IExtraInfoSupport {
-    private computeInfoHelper(cmake_get_help, value, range) {
-        return new Promise(function(resolve, reject) {
-            let cmd = cmake_get_help(value);
-            cmd.then(function(stdout) {
-                let documentationContent = stdout.split('\n').map(function(line: string) {
-                    return { className: 'documentation', text: line }
-                });
-                var extraInfoResult = {
-                    value: '',
-                    range: range,
-                    className: 'typeInfo',
-                    htmlContent: [{ className: 'type', text: value }].concat(documentationContent)
-                };
-                resolve(extraInfoResult);
-            }).catch(function(e) { 
-                console.log(e);
-                reject(); 
-            });
-        });
-    }
-    public computeInfo(document: TextDocument, position: Position, token: CancellationToken) /*: Thenable<IComputeExtraInfoResult>*/ {
-        let range = document.getWordRangeAtPosition(position);
-        let value = document.getTextInRange(range);
+class CMakeExtraInfoSupport implements HoverProvider {
+   
+    public provideHover(document: TextDocument, position: Position, token: CancellationToken): Thenable<Hover> {
+     let range = document.getWordRangeAtPosition(position);
+        let value = document.getText(range);
         let promises = cmake_help_all();
         
         return Promise.all([
@@ -237,40 +244,56 @@ class CMakeExtraInfoSupport implements Modes.IExtraInfoSupport {
              if(suggestions.length == 0) {
                  return null;
              }
-             let suggestion = suggestions[0];
+             let suggestion : CompletionItem = suggestions[0];
              
-            return promises[suggestion.type](suggestion.label).then(function(result:string){    
+            return promises[cmakeTypeFromvscodeKind(suggestion.kind)](suggestion.label).then(function(result:string){    
                 let lines = result.split('\n');
                 
                 lines = lines.slice(2, Math.min(20, lines.length));
-               let documentationContent = lines.map(function(line: string) {
-                return { className: 'documentation', text: line }
-               });
-               var extraInfoResult = {
-                    value: value,
-                    range: range,
-                    className: 'typeInfo',
-                    htmlContent: [{ className: 'type', text: value }].concat(documentationContent)
-                };        
-                return extraInfoResult;
+              
+               
+                let hover = new Hover({language: 'md', value: lines.join('\n')});
+                return hover;
             });
         });
     }
 }
 
+function vscodeKindFromCMakeCodeClass(kind: string): CompletionItemKind {
+	switch (kind) {
+		case "function":
+			return CompletionItemKind.Function;
+		case "variable":
+			return CompletionItemKind.Variable;
+		case "module":
+			return CompletionItemKind.Module;
+	}
+	return CompletionItemKind.Property; // TODO@EG additional mappings needed?
+}
+
+function cmakeTypeFromvscodeKind(kind: CompletionItemKind): string {
+	switch (kind) {
+		case CompletionItemKind.Function:
+			return "function";
+		case CompletionItemKind.Variable:
+        return "variable";
+		case CompletionItemKind.Module:
+        return "module";
+	}
+    return "property";
+}
 
 
-  function suggestionsHelper(cmake_cmd, currentWord: string, type:string, suffix:string, matchPredicate) {
+  function suggestionsHelper(cmake_cmd, currentWord: string, type:string, suffix:string, matchPredicate) : Thenable<CompletionItem[]>{
          return new Promise(function(resolve, reject) {
             cmake_cmd.then(function(stdout: string) {
                 let commands = stdout.split('\n').filter(function(v){return matchPredicate(v, currentWord)});
                 if(commands.length>0) {
                     let suggestions = commands.map(function(command_name){
-                        return {
-                            'type' : type,
-                            'label' : command_name,
-                            'codeSnippet': command_name+suffix
-                        };
+                        var item = new CompletionItem(command_name);
+                        item.kind = vscodeKindFromCMakeCodeClass(type);
+                        item.insertText = command_name+suffix;
+                        return item;
                     });
                     resolve(suggestions);
                 }else {
@@ -283,58 +306,58 @@ class CMakeExtraInfoSupport implements Modes.IExtraInfoSupport {
         });
     }
 
-  function cmCommandsSuggestions(currentWord: string) {
+  function cmCommandsSuggestions(currentWord: string) : Thenable<CompletionItem[]> {
       let cmd = cmake_help_command_list();
       return suggestionsHelper(cmd, currentWord, 'function', '({{}})', strContains);
   }
 
-  function cmVariablesSuggestions(currentWord: string) {
+  function cmVariablesSuggestions(currentWord: string): Thenable<CompletionItem[]> {
       let cmd = cmake_help_variable_list();
       return suggestionsHelper(cmd, currentWord, 'variable', '', strContains);
   }
 
 
-  function cmPropertiesSuggestions(currentWord: string) {
+  function cmPropertiesSuggestions(currentWord: string): Thenable<CompletionItem[]> {
       let cmd = cmake_help_property_list();
       return suggestionsHelper(cmd, currentWord, 'property', '', strContains);
   }
 
-  function cmModulesSuggestions(currentWord: string) {
+  function cmModulesSuggestions(currentWord: string) : Thenable<CompletionItem[]>{
       let cmd = cmake_help_module_list();
       return suggestionsHelper(cmd, currentWord, 'module', '', strContains);
   }
     
-  function cmCommandsSuggestionsExact(currentWord: string) {
+  function cmCommandsSuggestionsExact(currentWord: string) : Thenable<CompletionItem[]>{
       let cmd = cmake_help_command_list();
       return suggestionsHelper(cmd, currentWord, 'function', '({{}})', strEquals);
   }
 
-  function cmVariablesSuggestionsExact(currentWord: string) {
+  function cmVariablesSuggestionsExact(currentWord: string): Thenable<CompletionItem[]> {
       let cmd = cmake_help_variable_list();
       return suggestionsHelper(cmd, currentWord, 'variable', '', strEquals);
   }
 
 
-  function cmPropertiesSuggestionsExact(currentWord: string) {
+  function cmPropertiesSuggestionsExact(currentWord: string) : Thenable<CompletionItem[]>{
       let cmd = cmake_help_property_list();
       return suggestionsHelper(cmd, currentWord, 'property', '', strEquals);
   }
 
-  function cmModulesSuggestionsExact(currentWord: string) {
+  function cmModulesSuggestionsExact(currentWord: string) : Thenable<CompletionItem[]> {
       let cmd = cmake_help_module_list();
       return suggestionsHelper(cmd, currentWord, 'module', '', strEquals);
   }
     
-class CMakeSuggestionSupport implements Modes.ISuggestSupport {
+class CMakeSuggestionSupport implements CompletionItemProvider {
     public triggerCharacters: string[];
     public excludeTokens: string[] = ['string', 'comment', 'numeric'];
 
    
-    public suggest(document: TextDocument, position: Position, token: CancellationToken) {
+    public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken) : Thenable<CompletionItem[]> {
         let wordAtPosition = document.getWordRangeAtPosition(position);
         var currentWord = '';
         if (wordAtPosition && wordAtPosition.start.character < position.character) {
-            var word = document.getTextInRange(wordAtPosition);
+            var word = document.getText(wordAtPosition);
             currentWord = word.substr(0, position.character - wordAtPosition.start.character);
         }
         
@@ -346,28 +369,28 @@ class CMakeSuggestionSupport implements Modes.ISuggestSupport {
                 cmModulesSuggestions(currentWord)
             ]).then(function(results){
                 var suggestions = Array.prototype.concat.apply([], results);
-                resolve([{
-                        'currentWord': currentWord,
-                        'suggestions': suggestions}]);
+                resolve(suggestions);
             }).catch(err=>{ reject(err); });
         });
     }
    
-    public getSuggestionDetails(document: TextDocument, position: Position, suggestion:Modes.ISuggestion, token: CancellationToken) {
+    public resolveCompletionItem(item: CompletionItem, token: CancellationToken) : Thenable<CompletionItem>{
         let promises = cmake_help_all();
-        return promises[suggestion.type](suggestion.label).then(function(result:string){            
-            suggestion.documentationLabel = result.split('\n')[3];
-            return suggestion;
-        });
-       
+        let type = cmakeTypeFromvscodeKind(item.kind);
+        return promises[type](item.label).then(function(result:string){            
+            item.documentation  = result.split('\n')[3];
+            return item;
+        });       
      }
 }
 
 
 // CMake Language Definition
 
-class CMakeLanguageDef {
-
+class CMakeLanguageDef  /*implements LanguageConfiguration*/ {
+        public comments = {
+			lineComment: '#',
+		}
         public name:string = 'cmake';
         public displayName:string= 'Cmake';
         public ignoreCase: boolean = true;

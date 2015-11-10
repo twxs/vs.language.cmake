@@ -1,21 +1,20 @@
-# vs.language.cmake
+# CMake For VisualStudio Code
 
-Experimental extension for [Cmake](http://www.cmake.org/) in [Visual Studio Code](https://code.visualstudio.com/) 0.8.0
+This extension provides support for [Cmake](http://www.cmake.org/) in [Visual Studio Code](https://code.visualstudio.com/) 0.10.0
 
-![Screenshot](screenshots/capture.png)
+![Screenshot](images/code.gif)
 
 ## Features
+
 - Colorization
 - Completion Lists 
 - Snippets
-- Quick Help ![Screenshot](screenshots/tooltip.png)
+- Quick Help
+- Access To Online Help
 
-## Install
-on Windows, run a console prompt as administrator and create a simlink to the source in the vscode plugins directory
+## Contributes
 
-```
-mklink "%programfiles(x86)%/Microsoft VS Code/resources/app/plugins/vs.language.cmake" path_to_cloned_repository
-```
+Fill free to contribute...
 
 ## License
 [MIT](LICENSE)
