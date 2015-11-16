@@ -86,7 +86,7 @@ function cmake_help_property_list(): Promise<string> {
 }
 
 function cmake_help_property(name: string): Promise<string> {
-    return cmake_help_variable_list()
+    return cmake_help_property_list()
         .then(function(result: string) {
             let contains = result.indexOf(name) > -1;
             return new Promise(function(resolve, reject) {
@@ -104,7 +104,7 @@ function cmake_help_module_list(): Promise<string> {
 }
 
 function cmake_help_module(name: string): Promise<string> {
-    return cmake_help_variable_list()
+    return cmake_help_module_list()
         .then(function(result: string) {
             let contains = result.indexOf(name) > -1;
             return new Promise(function(resolve, reject) {
@@ -156,11 +156,16 @@ function cmake_online_help(search:string) {
             }else {
                 let suggestion = suggestions[0];
                 let type = cmakeTypeFromvscodeKind(suggestion.kind);
+                if(type == 'property') {
+                    // TODO : needs to filter properties per scope to detect the right URL
+                    opener('https://cmake.org/cmake/help/latest/search.html?q='+ search +'&check_keywords=yes&area=default');                    
+                }else {
                 if(type == 'function') {
                     type = 'command';
                 }
                 search = search.replace(/[<>]/g, '');
                 opener('https://cmake.org/cmake/help/latest/' + type + '/' + search + '.html'); 
+                }
              }
         });
 }
@@ -186,7 +191,7 @@ export function activate(disposables: Disposable[]) {
         
         if (wordAtPosition && wordAtPosition.start.character < position.character) {
             var word = document.getText(wordAtPosition);
-            currentWord =word;// word.substr(0, position.character - wordAtPosition.start.character);
+            currentWord =word;
         }
         
         window.showInputBox({prompt: 'Search on Cmake online documentation', placeHolder:currentWord}).then(function(result){  
@@ -293,7 +298,7 @@ function cmakeTypeFromvscodeKind(kind: CompletionItemKind): string {
 }
 
 
-  function suggestionsHelper(cmake_cmd, currentWord: string, type:string, suffix:string, matchPredicate) : Thenable<CompletionItem[]>{
+  function suggestionsHelper(cmake_cmd, currentWord: string, type:string, insertText, matchPredicate) : Thenable<CompletionItem[]>{
          return new Promise(function(resolve, reject) {
             cmake_cmd.then(function(stdout: string) {
                 let commands = stdout.split('\n').filter(function(v){return matchPredicate(v, currentWord)});
@@ -301,7 +306,11 @@ function cmakeTypeFromvscodeKind(kind: CompletionItemKind): string {
                     let suggestions = commands.map(function(command_name){
                         var item = new CompletionItem(command_name);
                         item.kind = vscodeKindFromCMakeCodeClass(type);
-                        item.insertText = command_name+suffix;
+                        if(insertText == null || insertText == '') {
+                            item.insertText = command_name;
+                        }else {
+                            item.insertText = insertText(command_name);
+                        }
                         return item;
                     });
                     resolve(suggestions);
@@ -314,47 +323,69 @@ function cmakeTypeFromvscodeKind(kind: CompletionItemKind): string {
             });
         });
     }
+function cmModuleInsertText(module:string) {
+    if(module.indexOf('Find') == 0){
+        return 'find_package('+ module.replace('Find', '')+'{{ REQUIRED}})';
+    }else {
+        return 'include('+module+')';
+    }
+}
+
+function cmFunctionInsertText(func:string) {
+    let scoped_func = ['if', 'function', 'while', 'macro', 'foreach'];
+    let is_scoped = scoped_func.reduceRight(function(prev, name, idx, array){return prev || func == name;}, false ) ;
+    if(is_scoped)
+    return func + '({{}})\n\t\nend'+func+'()\n';
+    else
+    return func + '({{}})'
+}
+function cmVariableInsertText(variable:string) {
+    return variable.replace(/<(.*)>/g,'{{$1}}');
+}
+function cmPropetryInsertText(variable:string) {
+    return variable.replace(/<(.*)>/g,'{{$1}}');
+}
 
   function cmCommandsSuggestions(currentWord: string) : Thenable<CompletionItem[]> {
       let cmd = cmake_help_command_list();
-      return suggestionsHelper(cmd, currentWord, 'function', '({{}})', strContains);
+      return suggestionsHelper(cmd, currentWord, 'function', cmFunctionInsertText, strContains);
   }
 
   function cmVariablesSuggestions(currentWord: string): Thenable<CompletionItem[]> {
       let cmd = cmake_help_variable_list();
-      return suggestionsHelper(cmd, currentWord, 'variable', '', strContains);
+      return suggestionsHelper(cmd, currentWord, 'variable', cmVariableInsertText, strContains);
   }
 
 
   function cmPropertiesSuggestions(currentWord: string): Thenable<CompletionItem[]> {
       let cmd = cmake_help_property_list();
-      return suggestionsHelper(cmd, currentWord, 'property', '', strContains);
+      return suggestionsHelper(cmd, currentWord, 'property', cmPropetryInsertText, strContains);
   }
 
   function cmModulesSuggestions(currentWord: string) : Thenable<CompletionItem[]>{
       let cmd = cmake_help_module_list();
-      return suggestionsHelper(cmd, currentWord, 'module', '', strContains);
+      return suggestionsHelper(cmd, currentWord, 'module', cmModuleInsertText, strContains);
   }
     
   function cmCommandsSuggestionsExact(currentWord: string) : Thenable<CompletionItem[]>{
       let cmd = cmake_help_command_list();
-      return suggestionsHelper(cmd, currentWord, 'function', '({{}})', strEquals);
+      return suggestionsHelper(cmd, currentWord, 'function', cmFunctionInsertText, strEquals);
   }
 
   function cmVariablesSuggestionsExact(currentWord: string): Thenable<CompletionItem[]> {
       let cmd = cmake_help_variable_list();
-      return suggestionsHelper(cmd, currentWord, 'variable', '', strEquals);
+      return suggestionsHelper(cmd, currentWord, 'variable', cmVariableInsertText, strEquals);
   }
 
 
   function cmPropertiesSuggestionsExact(currentWord: string) : Thenable<CompletionItem[]>{
       let cmd = cmake_help_property_list();
-      return suggestionsHelper(cmd, currentWord, 'property', '', strEquals);
+      return suggestionsHelper(cmd, currentWord, 'property', cmPropetryInsertText, strEquals);
   }
 
   function cmModulesSuggestionsExact(currentWord: string) : Thenable<CompletionItem[]> {
       let cmd = cmake_help_module_list();
-      return suggestionsHelper(cmd, currentWord, 'module', '', strEquals);
+      return suggestionsHelper(cmd, currentWord, 'module', cmModuleInsertText, strEquals);
   }
     
 class CMakeSuggestionSupport implements CompletionItemProvider {
