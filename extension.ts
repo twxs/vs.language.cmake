@@ -1,6 +1,6 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import {workspace, window, languages, TextDocument, DocumentFilter, Position, commands,LanguageConfiguration, CompletionItemKind, CompletionItem, CompletionItemProvider, Hover, HoverProvider, Disposable, CancellationToken} from 'vscode';
+import {workspace, window, languages,ExtensionContext, TextDocument, DocumentFilter, Position, commands,LanguageConfiguration, CompletionItemKind, CompletionItem, CompletionItemProvider, Hover, HoverProvider, Disposable, CancellationToken} from 'vscode';
 import util  = require('util');
 import child_process = require("child_process");
 
@@ -173,6 +173,7 @@ function cmake_online_help(search:string) {
 // this method is called when your extension is activated. activation is
 // controlled by the activation events defined in package.json
 export function activate(disposables: Disposable[]) {
+
 
     commands.registerCommand('cmake.onlineHelp', () => {
         // The code you place here will be executed every time your command is executed

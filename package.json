@@ -1,6 +1,6 @@
 {
 	"name": "cmake",
-	"version": "0.0.7",
+	"version": "0.0.8",
 	"publisher": "twxs",
 	"displayName": "CMake",
 	"description": "CMake langage support for Visual Studio Code",
@@ -21,7 +21,7 @@
 		"Syntax"
 	],
 	"categories": [
-        "Languages", "Other"
+        "Languages", "Snippets", "Other"
     ],
 	"icon": "images/icon.png",
 	"galleryBanner": {
