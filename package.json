@@ -1,7 +1,8 @@
 {
 	"name": "cmake",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"publisher": "twxs",
+	"displayName": "CMake",
 	"description": "CMake langage support for Visual Studio Code",
 	"author": {
 		"name": "Nicolas Martin"
@@ -10,12 +11,23 @@
 		"type": "git",
 		"url": "https://github.com/twxs/vs.language.cmake.git"
 	},
+	
+	"bugs": {
+        "url": "https://github.com/twxs/vs.language.cmake/issues"
+    },
 	"homepage": "https://github.com/twxs/vs.language.cmake/blob/master/README.md",
 	"keywords": [
 		"CMake",
 		"Syntax"
 	],
-	"icon": "images/icon.jpg",
+	"categories": [
+        "Languages", "Other"
+    ],
+	"icon": "images/icon.png",
+	"galleryBanner": {
+        "color": "#5c2d91",
+        "theme": "dark"
+    },
 	"license": "MIT",
 	"activationEvents": [
 		"onLanguage:cmake"

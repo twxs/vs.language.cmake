@@ -146,14 +146,20 @@ function cmake_online_help(search:string) {
              var opener = require("opener");
             
              var suggestions = Array.prototype.concat.apply([], results);
-             if(suggestions.length == 0) {
-                opener('https://cmake.org/cmake/help/latest/search.html?q='+ search +'&check_keywords=yes&area=default');
-             }else {
+             if(suggestions.length == 0 ) {
+                 search = search.replace(/[<>]/g, '');
+                 if(search.length == 0) {
+                    opener('https://cmake.org/cmake/help/latest/');                     
+                 }else {
+                    opener('https://cmake.org/cmake/help/latest/search.html?q='+ search +'&check_keywords=yes&area=default');
+                 } 
+            }else {
                 let suggestion = suggestions[0];
                 let type = cmakeTypeFromvscodeKind(suggestion.kind);
                 if(type == 'function') {
                     type = 'command';
                 }
+                search = search.replace(/[<>]/g, '');
                 opener('https://cmake.org/cmake/help/latest/' + type + '/' + search + '.html'); 
              }
         });
@@ -183,8 +189,11 @@ export function activate(disposables: Disposable[]) {
             currentWord =word;// word.substr(0, position.character - wordAtPosition.start.character);
         }
         
-        window.showInputBox({prompt: 'Search on Cmake online documentation', placeHolder:currentWord}).then(function(result){         
-            cmake_online_help(currentWord);
+        window.showInputBox({prompt: 'Search on Cmake online documentation', placeHolder:currentWord}).then(function(result){  
+            if(result == null) {
+                result = currentWord;
+            }       
+            cmake_online_help(result);
         });
     });
     
