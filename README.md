@@ -27,6 +27,9 @@ This extension provides support for [CMake](http://www.cmake.org/) in [Visual St
 
 - Access To Online Help
 
+## Acknowledgements
+This extension uses the TextMate Syntax from [this project](https://github.com/zyxar/Sublime-CMakeLists).
+
 ## Contributes
 
 Fill free to contribute...
