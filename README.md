@@ -1,15 +1,22 @@
 # CMake For VisualStudio Code
 
-This extension provides support for [Cmake](http://www.cmake.org/) in [Visual Studio Code](https://code.visualstudio.com/) 0.10.0
+This extension provides support for [CMake](http://www.cmake.org/) in [Visual Studio Code](https://code.visualstudio.com/).
 
-![Screenshot](images/code.gif)
+![Screenshot](images/cmake1.gif)
+
 
 ## Features
 
 - Colorization
 - Completion Lists 
+![Screenshot](images/cmake2.gif)
+- Code comments
+![Screenshot](images/cmake3.gif)
 - Snippets
+![Screenshot](images/cmake5.gif)
+![Screenshot](images/cmake6.gif)
 - Quick Help
+![Screenshot](images/cmake4.gif)
 - Access To Online Help
 
 ## Contributes
