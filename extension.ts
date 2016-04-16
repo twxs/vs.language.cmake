@@ -196,10 +196,14 @@ export function activate(disposables: Disposable[]) {
         }
         
         window.showInputBox({prompt: 'Search on Cmake online documentation', placeHolder:currentWord}).then(function(result){  
-            if(result == null) {
-                result = currentWord;
-            }       
-            cmake_online_help(result);
+            if (typeof result != 'undefined') { // Escape
+                if(result.length === 0) { // 
+                    result = currentWord;
+                }
+                if(result != "") {
+                    cmake_online_help(result);
+                }       
+            }
         });
     });
     
