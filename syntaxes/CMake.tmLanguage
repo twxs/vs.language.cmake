@@ -50,6 +50,12 @@
 			<string>storage.source.cmake</string>
 		</dict>
 		<dict>
+			<key>match</key>
+			<string>\$ENV\{\w+\}</string>
+			<key>name</key>
+			<string>storage.source.cmake</string>
+		</dict>
+		<dict>
 			<key>comment</key>
 			<string>Variables that Control the Build</string>
 			<key>match</key>
@@ -122,11 +128,24 @@
 		<dict>
 			<key>comment</key>
 			<string>Normal Strings</string>
-			<key>match</key>
-			<string>(?m:"(\.|[^"])*+"|'(\.|[^'])*+')</string>
+			<key>begin</key>
+			<string>"</string>
+			<key>end</key>
+			<string>"</string>
 			<key>name</key>
 			<string>string.source.cmake</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>match</key>
+					<string>\\(.|$)</string>
+					<key>name</key>
+					<string>constant.character.escape</string>
+				</dict>
+			</array>
 		</dict>
+		
+			
 		<dict>
 			<key>comment</key>
 			<string>Derecated keyword</string>
@@ -144,6 +163,12 @@
 			<string>variable.source.cmake</string>
 		</dict>
 	</array>
+	<key>repository</key>
+		
+		
+	<dict>
+	
+	</dict>
 	<key>scopeName</key>
 	<string>source.cmake</string>
 	<key>uuid</key>

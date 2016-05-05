@@ -1,6 +1,6 @@
 {
 	"name": "cmake",
-	"version": "0.0.13",
+	"version": "0.0.14",
 	"publisher": "twxs",
 	"displayName": "CMake",
 	"description": "CMake langage support for Visual Studio Code",
