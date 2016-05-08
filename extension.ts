@@ -13,6 +13,11 @@ function strEquals(word, pattern) {
     return word == pattern;
 }
 
+/// configuration helpers
+function config<T>(key: string, defaultValue?: any): T {
+    const cmake_conf = workspace.getConfiguration('cmake');
+    return cmake_conf.get<T>(key, defaultValue);
+}
 
 
 /// Cmake process helpers
@@ -21,7 +26,7 @@ function strEquals(word, pattern) {
 // and return a promise with stdout
 let cmake = (args: string[]): Promise<string> => {
     return new Promise(function(resolve, reject) {
-        let cmd = child_process.spawn('cmake', args.map(arg=> { return arg.replace(/\r/gm, ''); }));
+        let cmd = child_process.spawn(config<string>('cmakePath', 'cmake'), args.map(arg=> { return arg.replace(/\r/gm, ''); }));
         let stdout: string = '';
         cmd.stdout.on('data', function(data) {
             var txt: string = data.toString('utf8');
