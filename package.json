@@ -1,6 +1,6 @@
 {
 	"name": "cmake",
-	"version": "0.0.14",
+	"version": "0.0.15",
 	"publisher": "twxs",
 	"displayName": "CMake",
 	"description": "CMake langage support for Visual Studio Code",
@@ -70,7 +70,17 @@
 				"scopeName": "source.cmake",
 				"path": "./syntaxes/CMake.tmLanguage"
 			}
-		]
+		],
+		"configuration": {
+			"title": "CMake configuration",
+			"properties": {
+				"cmake.cmakePath": {
+                    "type": "string",
+                    "default": "cmake",
+                    "description": "The path to CMake generator executable"
+                }
+			}
+		}
 	},
 	"scripts": {
 		"prepublish": "tsc",
