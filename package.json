@@ -1,6 +1,6 @@
 {
 	"name": "cmake",
-	"version": "0.0.14",
+	"version": "0.0.15",
 	"publisher": "twxs",
 	"displayName": "CMake",
 	"description": "CMake langage support for Visual Studio Code",
@@ -33,8 +33,8 @@
 		"onLanguage:cmake"
 	],
 	"devDependencies": {
-		"typescript": "^1.6.2",
-		"vscode": "*"
+		"typescript": "^1.8.5",
+        "vscode": "^0.11.0"
 	},
 	"dependencies": {
 		"opener": "*"
@@ -73,7 +73,8 @@
 		]
 	},
 	"scripts": {
-		"prepublish": "tsc",
-		"compile": "node ./node_modules/vscode/bin/compile -watch -p ./"
+		"vscode:prepublish": "node ./node_modules/vscode/bin/compile",
+        "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install"
 	}
 }

@@ -1,8 +1,12 @@
+///<reference path="./typings/node.d.ts"/>
+
+'use strict';
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import {workspace, window, languages,ExtensionContext, TextDocument, DocumentFilter, Position, commands,LanguageConfiguration, CompletionItemKind, CompletionItem, CompletionItemProvider, Hover, HoverProvider, Disposable, CancellationToken} from 'vscode';
-import util  = require('util');
-import child_process = require("child_process");
+
+import * as util from 'util';
+import * as child_process from 'child_process';
 
 /// strings Helpers
 function strContains(word, pattern) {
