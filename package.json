@@ -42,7 +42,7 @@
 	"engines": {
 		"vscode": "0.10.x"
 	},
-	"main": "./out/extension",
+	"main": "./out/src/extension",
 	"contributes": {
 		"languages": [
 			{
@@ -70,7 +70,17 @@
 				"scopeName": "source.cmake",
 				"path": "./syntaxes/CMake.tmLanguage"
 			}
-		]
+		],
+		"configuration": {
+			"title": "CMake configuration",
+			"properties": {
+				"cmake.cmakePath": {
+                    "type": "string",
+                    "default": "cmake",
+                    "description": "The path to CMake generator executable"
+                }
+			}
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "node ./node_modules/vscode/bin/compile",

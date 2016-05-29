@@ -29,12 +29,33 @@ This extension provides support for [CMake](http://www.cmake.org/) in [Visual St
 
 - Access To Online Help
 
-## Acknowledgements
-This extension uses the TextMate Syntax from [this project](https://github.com/zyxar/Sublime-CMakeLists).
 
-## Contributes
+## Options
+
+The following Visual Studio Code settings are available for the Cmake extension. These can be set in user preferences (cmd+,) or workspace settings (.vscode/settings.json).
+
+```json
+{
+    "cmake.cmakePath": "/path/to/cmake"
+}
+```
+
+## Commands
+
+- `CMake: Online Help` to go to the CMake online documentation (according to the current cmake version). 
+
+## Acknowledgements
+
+This extension based on the TextMate Syntax from [this project](https://github.com/zyxar/Sublime-CMakeLists).
+
+
+## Contributors
+
+- [Stanislav Ionascu](https://github.com/stanionascu)
+- [Rostislav Kondratenko](https://github.com/rkondratenko)
 
 Fill free to contribute...
 
 ## License
+
 [MIT](LICENSE)
