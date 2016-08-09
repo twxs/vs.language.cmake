@@ -54,7 +54,7 @@ This extension based on the TextMate Syntax from [this project](https://github.c
 - [Stanislav Ionascu](https://github.com/stanionascu)
 - [Rostislav Kondratenko](https://github.com/rkondratenko)
 
-Fill free to contribute...
+Feel free to contribute...
 
 ## License
 
