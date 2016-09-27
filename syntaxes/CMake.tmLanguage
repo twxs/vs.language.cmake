@@ -72,6 +72,46 @@
 			<string>variable.source.cmake</string>
 		</dict>
 		<dict>
+			<key>comment</key>
+			<string>BracketArgs</string>
+			<key>begin</key>
+			<string>#\[(=*)\[</string>
+			<key>end</key>
+			<string>\]\1\]</string>
+			<key>name</key>
+			<string>comment.source.cmake</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>match</key>
+					<string>\\(.|$)</string>
+					<key>name</key>
+					<string>constant.character.escape</string>
+				</dict>
+			</array>
+		</dict>	
+		
+		<dict>
+			<key>comment</key>
+			<string>BracketArgs</string>
+			<key>begin</key>
+			<string>\[(=*)\[</string>
+			<key>end</key>
+			<string>\]\1\]</string>
+			<key>name</key>
+			<string>argument.source.cmake</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>match</key>
+					<string>\\(.|$)</string>
+					<key>name</key>
+					<string>constant.character.escape</string>
+				</dict>
+			</array>
+		</dict>	
+			
+		<dict>
 			<key>match</key>
 			<string>#+.*$</string>
 			<key>name</key>
@@ -145,7 +185,7 @@
 			</array>
 		</dict>
 		
-			
+		
 		<dict>
 			<key>comment</key>
 			<string>Derecated keyword</string>
