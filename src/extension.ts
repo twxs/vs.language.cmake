@@ -5,32 +5,32 @@ import * as proc from "child_process";
 import * as fs from "fs";
 import * as path from "path";
 
-import * as cmake_hover from "./cmakeHoverProvider";
-import * as cmake_complete from "./cmakeCompletionItemProvider";
+import {CMakeExtraInfoSupport} from "./cmakeHoverProvider";
+import {CMakeCompletionItemProvider} from "./cmakeCompletionItemProvider";
+import {CMakeDocumentFormattingEditProvider} from "./cmakeDocumentFormattingEditProvider";
+import {CMakeDefinitionProvider}  from "./cmakeDefinitionProvider";
+import {CMakeRenameProvider} from "./cmakeRenameProvider";
+import {CMakeReferenceProvider} from "./cmakeReferenceProvider";
+import {CMakeCodeLensProvider} from "./cmakeCMakeCodeLensProvider";
 
-class DefProvider implements vscode.DefinitionProvider {
-    public provideDefinition(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken): vscode.Definition {
-        return new vscode.Location(document.uri, new vscode.Position(0, 0));
-    }
-};
-
-class CMakeDocumentFormattingEditProvider implements vscode.DocumentFormattingEditProvider {
-    public provideDocumentFormattingEdits(document: vscode.TextDocument, options: vscode.FormattingOptions, token: vscode.CancellationToken): vscode.TextEdit[] {
-        
-        return [ new vscode.TextEdit(new vscode.Range(0, 0, 11, 0), "hello\n")];
-       // return null;
-    }
-
-}
 
 export function activate(context: vscode.ExtensionContext) {
         const CMAKE_MODE: vscode.DocumentFilter = { language: "cmake", scheme: "file" };
 
+        context.subscriptions.push(vscode.languages.registerHoverProvider(CMAKE_MODE, new CMakeExtraInfoSupport()));
+        context.subscriptions.push(vscode.languages.registerCompletionItemProvider("cmake", new CMakeCompletionItemProvider()));
+        context.subscriptions.push(vscode.languages.registerDefinitionProvider(CMAKE_MODE, new CMakeDefinitionProvider()));
 
-        vscode.languages.registerHoverProvider(CMAKE_MODE, new cmake_hover.CMakeExtraInfoSupport());
-        vscode.languages.registerCompletionItemProvider("cmake", new cmake_complete.CMakeCompletionItemProvider());
-        vscode.languages.registerDefinitionProvider(CMAKE_MODE, new DefProvider);
-        vscode.languages.registerDocumentFormattingEditProvider(CMAKE_MODE, new CMakeDocumentFormattingEditProvider());
+        let cmakeConfig = vscode.workspace.getConfiguration("cmake");
+
+        if (cmakeConfig.get<boolean>("experimental.enableFormattingEditProvider", false))
+            context.subscriptions.push(vscode.languages.registerDocumentFormattingEditProvider(CMAKE_MODE, new CMakeDocumentFormattingEditProvider()));
+        if (cmakeConfig.get<boolean>("experimental.enableRenameProvider", false))
+            context.subscriptions.push(vscode.languages.registerRenameProvider(CMAKE_MODE, new CMakeRenameProvider()));
+        if (cmakeConfig.get<boolean>("experimental.enableReferenceProvider", false))
+            context.subscriptions.push(vscode.languages.registerReferenceProvider(CMAKE_MODE, new CMakeReferenceProvider()));
+        if (cmakeConfig.get<boolean>("experimental.enableCodeLensProvider", false))
+            context.subscriptions.push(vscode.languages.registerCodeLensProvider(CMAKE_MODE, new CMakeCodeLensProvider()));
 
         vscode.languages.setLanguageConfiguration(CMAKE_MODE.language, {
         indentationRules: {
@@ -41,7 +41,8 @@ export function activate(context: vscode.ExtensionContext) {
         },
         wordPattern: /(-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\"\"\,\.\<\>\/\?\s]+)/g,
         comments: {
-            lineComment: "#"
+            lineComment: "#",
+            blockComment: ["#[[", "]]"],
         },
         brackets: [
             ["{", "}"],

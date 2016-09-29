@@ -1,6 +1,6 @@
 {
 	"name": "cmake",
-	"version": "0.0.15",
+	"version": "0.0.16",
 	"publisher": "twxs",
 	"displayName": "CMake",
 	"description": "CMake langage support for Visual Studio Code",
@@ -37,10 +37,11 @@
         "vscode": "^0.11.0"
 	},
 	"dependencies": {
-		"opener": "*"
+		"opener": "*",
+        "peg-cmake": "^0.0.8"		
 	},
 	"engines": {
-		"vscode": "0.10.x"
+		"vscode": "^1.1.1"
 	},
 	"main": "./out/src/extension",
 	"contributes": {
@@ -78,6 +79,23 @@
                     "type": "string",
                     "default": "cmake",
                     "description": "The path to CMake generator executable"
+                }, 
+				"cmake.experimental.enableCodeLensProvider": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Experimental CodeLens Definition Feature"
+                }
+				, 
+				"cmake.experimental.enableDefinitionProvider": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Experimental GoTo/Peek Definition Feature"
+                }
+				, 
+				"cmake.experimental.enableRenameProvider": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Experimental Rename Feature"
                 }
 			}
 		}

@@ -8,5 +8,7 @@
 		"**/node_modules": true,
 		"**/bower_components": true,
 		"out/": true
-	}
+	},
+	"typescript.tsdk": "node_modules/typescript/lib"
+
 }
