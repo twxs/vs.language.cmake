@@ -29,7 +29,7 @@ let cmake = (args: string[]): Promise<string> => {
         let cmd = child_process.spawn(config<string>('cmakePath', 'cmake'), args.map(arg => { return arg.replace(/\r/gm, ''); }));
         let stdout: string = '';
         cmd.stdout.on('data', function (data) {
-            var txt: string = data.toString('utf8');
+            var txt: string = data.toString();
             stdout += txt.replace(/\r/gm, '');
         });
         cmd.on("error", function (error) {
