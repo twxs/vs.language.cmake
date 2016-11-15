@@ -1,8 +1,8 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import * as util from 'util';
-import * as child_process from 'child_process';
 import {workspace, window, languages, ExtensionContext, TextDocument, DocumentFilter, Position, commands, LanguageConfiguration, CompletionItemKind, CompletionItem, CompletionItemProvider, Hover, HoverProvider, Disposable, CancellationToken} from 'vscode';
+import util = require('util');
+import child_process = require("child_process");
 
 /// strings Helpers
 function strContains(word, pattern) {
@@ -70,7 +70,7 @@ async function cmake_help_url() {
             version = version.replace(re, '$1/');
         } else {
             let older_versions = [
-                '2.8.12', '2.8.11', '2.8.10', '2.8.9', '2.8.8', '2.8.7', '2.8.6', '2.8.5', '2.8.4', '2.8.3', '2.8.2', '2.8.1', '2.8.0', '2.6'
+                '2.8.12', '2.8.11', '2.8.10', '2.8.9', '2.8.8', '2.8.7', '2.8.6', '2.8.5', '2.8.4', '2.8.3', '2.8.2', '2.8.1', '2.8.0', '2.6' 
             ];
             if (older_versions.indexOf(version) == -1) {
                 version = 'latest/';
@@ -184,7 +184,7 @@ function cmake_help_all() {
 
 async function cmake_online_help(search: string) {
     let url = await cmake_help_url();
-    let v2x = url.endsWith('html'); // cmake < 3.0
+    let v2x = url.endsWith('html'); // cmake < 3.0 
     return Promise.all([
         cmCommandsSuggestionsExact(search),
         cmVariablesSuggestionsExact(search),
@@ -218,7 +218,7 @@ async function cmake_online_help(search: string) {
                 }
                 search = search.replace(/[<>]/g, '');
                 if(v2x){
-                    opener(url + '#' + type + ':' + search);
+                    opener(url + '#' + type + ':' + search);                    
                 }else {
                     opener(url + type + '/' + search + '.html');
                 }
@@ -253,7 +253,7 @@ export function activate(disposables: Disposable[]) {
 
         window.showInputBox({ prompt: 'Search on Cmake online documentation', placeHolder: currentWord }).then(function (result) {
             if (typeof result != 'undefined') { // Escape
-                if (result.length === 0) { //
+                if (result.length === 0) { // 
                     result = currentWord;
                 }
                 if (result != "") {
@@ -513,7 +513,7 @@ class CMakeSuggestionSupport implements CompletionItemProvider {
 //         ];
 //         public textAfterBrackets:boolean = true;
 //         public variable= /\$\{\w+\}/;
-//        public  enhancedBrackets = [
+//        public  enhancedBrackets = [           
 //             {
 //                 openTrigger: '\)',
 //                 open: /if\((\w*)\)/i,
