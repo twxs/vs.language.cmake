@@ -11,7 +11,7 @@
 		"type": "git",
 		"url": "https://github.com/twxs/vs.language.cmake.git"
 	},
-	
+
 	"bugs": {
         "url": "https://github.com/twxs/vs.language.cmake/issues"
     },
@@ -49,6 +49,15 @@
 				"aliases": [
 					"CMake"
 				]
+			},
+			{
+				"id": "cmake-cache",
+				"filenames": [
+					"CMakeCache.txt"
+				],
+				"aliases": [
+					"CMake Cache"
+				]
 			}
 		],
 		"commands": [
@@ -62,6 +71,11 @@
 				"language": "cmake",
 				"scopeName": "source.cmake",
 				"path": "./syntaxes/CMake.tmLanguage"
+			},
+			{
+				"language": "cmake-cache",
+				"scopeName": "source.cmakecache",
+				"path": "./syntaxes/CMakeCache.tmLanguage"
 			}
 		],
 		"configuration": {
@@ -89,5 +103,5 @@
         "@types/node": "^6.0.47",
         "mocha": "^3.1.2",
         "@types/mocha": "^2.2.33"
-	}
+    }
 }
