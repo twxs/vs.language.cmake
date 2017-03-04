@@ -1,6 +1,6 @@
 {
 	"name": "cmake",
-	"version": "0.0.15",
+	"version": "0.0.17",
 	"publisher": "twxs",
 	"displayName": "CMake",
 	"description": "CMake langage support for Visual Studio Code",
@@ -33,7 +33,7 @@
 		"onLanguage:cmake"
 	],
 	"engines": {
-		"vscode": "^1.7.0"
+		"vscode": "^1.10.0"
 	},
 	"main": "./out/extension",
 	"contributes": {
