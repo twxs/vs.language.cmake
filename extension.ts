@@ -1,6 +1,6 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import {workspace, window, languages, ExtensionContext, TextDocument, DocumentFilter, Position, commands, LanguageConfiguration, CompletionItemKind, CompletionItem, CompletionItemProvider, Hover, HoverProvider, Disposable, CancellationToken} from 'vscode';
+import {workspace, window, languages, ExtensionContext, TextDocument, DocumentFilter, Position, commands, LanguageConfiguration, CompletionItemKind, CompletionItem, SnippetString, CompletionItemProvider, Hover, HoverProvider, Disposable, CancellationToken} from 'vscode';
 import util = require('util');
 import child_process = require("child_process");
 
@@ -370,7 +370,9 @@ function suggestionsHelper(cmake_cmd, currentWord: string, type: string, insertT
                     if (insertText == null || insertText == '') {
                         item.insertText = command_name;
                     } else {
-                        item.insertText = insertText(command_name);
+                        let snippet = new SnippetString(insertText(command_name));
+
+                        item.insertText = snippet;
                     }
                     return item;
                 });
@@ -386,7 +388,7 @@ function suggestionsHelper(cmake_cmd, currentWord: string, type: string, insertT
 }
 function cmModuleInsertText(module: string) {
     if (module.indexOf('Find') == 0) {
-        return 'find_package(' + module.replace('Find', '') + '{{ REQUIRED}})';
+        return 'find_package(' + module.replace('Find', '') + '${1: REQUIRED})';
     } else {
         return 'include(' + module + ')';
     }
@@ -396,15 +398,15 @@ function cmFunctionInsertText(func: string) {
     let scoped_func = ['if', 'function', 'while', 'macro', 'foreach'];
     let is_scoped = scoped_func.reduceRight(function (prev, name, idx, array) { return prev || func == name; }, false);
     if (is_scoped)
-        return func + '({{}})\n\t\nend' + func + '()\n';
+        return func + '(${1})\n\t\nend' + func + '(${1})\n';
     else
-        return func + '({{}})'
+        return func + '(${1})'
 }
 function cmVariableInsertText(variable: string) {
-    return variable.replace(/<(.*)>/g, '{{$1}}');
+    return variable.replace(/<(.*)>/g, '${1:<$1>}');
 }
 function cmPropetryInsertText(variable: string) {
-    return variable.replace(/<(.*)>/g, '{{$1}}');
+    return variable.replace(/<(.*)>/g, '${1:<$1>}');
 }
 
 function cmCommandsSuggestions(currentWord: string): Thenable<CompletionItem[]> {

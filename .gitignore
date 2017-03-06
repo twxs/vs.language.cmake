@@ -1,3 +1,5 @@
 out
 node_modules
 .vscode/.browse.VC.db
+*.vsix
+.BROWSE.VC.DB*
