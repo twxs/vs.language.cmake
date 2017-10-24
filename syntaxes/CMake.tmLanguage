@@ -175,29 +175,9 @@
 		</dict>
 		<dict>
 			<key>comment</key>
-			<!-- cf https://github.com/twxs/vs.language.cmake/issues/14 -->
-			<string>Escaped Strings</string>
-			<key>begin</key>
-			<string>\\"</string>
-			<key>end</key>
-			<string>\\"</string>
-			<key>name</key>
-			<string>string.source.cmake</string>
-			<key>patterns</key>
-			<array>
-				<dict>
-					<key>match</key>
-					<string>\\(.|$)</string>
-					<key>name</key>
-					<string>constant.character.escape</string>
-				</dict>
-			</array>
-		</dict>
-		<dict>
-			<key>comment</key>
 			<string>Normal Strings</string>
 			<key>begin</key>
-			<string>"</string>
+			<string>(?&lt;!\\)"</string>
 			<key>end</key>
 			<string>"</string>
 			<key>name</key>
