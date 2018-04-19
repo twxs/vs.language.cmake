@@ -1,6 +1,6 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import {workspace, window, languages, ExtensionContext, TextDocument, DocumentFilter, Position, commands, LanguageConfiguration, CompletionItemKind, CompletionItem, SnippetString, CompletionItemProvider, Hover, HoverProvider, Disposable, CancellationToken} from 'vscode';
+import {workspace, window, languages, ExtensionContext, TextDocument, DocumentSelector, Position, commands, LanguageConfiguration, CompletionItemKind, CompletionItem, SnippetString, CompletionItemProvider, Hover, HoverProvider, Disposable, CancellationToken} from 'vscode';
 import util = require('util');
 import child_process = require("child_process");
 
@@ -263,11 +263,16 @@ export function activate(disposables: Disposable[]) {
         });
     });
 
-    const CMAKE_MODE: DocumentFilter = { language: 'cmake', scheme: 'file' }
-    languages.registerHoverProvider('cmake', new CMakeExtraInfoSupport());
-    languages.registerCompletionItemProvider('cmake', new CMakeSuggestionSupport());
+    const CMAKE_LANGUAGE = 'cmake';
+    const CMAKE_SELECTOR: DocumentSelector = [
+        { language: CMAKE_LANGUAGE, scheme: 'file' },
+        { language: CMAKE_LANGUAGE, scheme: 'untitled' },
+    ];
 
-    languages.setLanguageConfiguration(CMAKE_MODE.language, {
+    languages.registerHoverProvider(CMAKE_SELECTOR, new CMakeExtraInfoSupport());
+    languages.registerCompletionItemProvider(CMAKE_SELECTOR, new CMakeSuggestionSupport());
+
+    languages.setLanguageConfiguration(CMAKE_LANGUAGE, {
         indentationRules: {
             // ^(.*\*/)?\s*\}.*$
             decreaseIndentPattern: /^(.*\*\/)?\s*\}.*$/,
