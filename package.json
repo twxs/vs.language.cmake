@@ -3,7 +3,7 @@
 	"version": "0.0.17",
 	"publisher": "twxs",
 	"displayName": "CMake",
-	"description": "CMake langage support for Visual Studio Code",
+	"description": "CMake language support for Visual Studio Code",
 	"author": {
 		"name": "Nicolas Martin"
 	},
