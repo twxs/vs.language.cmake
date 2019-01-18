@@ -23,7 +23,7 @@
 			<key>comment</key>
 			<string>cmakeOperators</string>
 			<key>match</key>
-			<string>\b(?i:
+			<string>(?x)\b(?i:
 ABSOLUTE
 |AND
 |BOOL
@@ -71,6 +71,15 @@ ABSOLUTE
 |VERSION_GREATER
 |VERSION_GREATER_EQUAL
 |VERSION_LESS
+|PROPERTY
+|PROPERTIES
+|PUBLIC
+|PRIVATE
+|INTERFACE
+|APPEND
+|APPEND_STRING
+|SOURCE
+|INSTALL
 			)\b</string>
 			<key>name</key>
 			<string>keyword.cmake</string>
