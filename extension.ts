@@ -19,6 +19,28 @@ function config<T>(key: string, defaultValue?: any): T {
     return cmake_conf.get<T>(key, defaultValue);
 }
 
+// copied from https://stackoverflow.com/questions/13796594/how-to-split-string-into-arguments-and-options-in-javascript
+function commandArgs2Array(text: string): string[] {
+    const re = /^"[^"]*"$/; // Check if argument is surrounded with double-quotes
+    const re2 = /^([^"]|[^"].*?[^"])$/; // Check if argument is NOT surrounded with double-quotes
+  
+    let arr = [];
+    let argPart = null;
+  
+    text && text.split(" ").forEach(function(arg) {
+      if ((re.test(arg) || re2.test(arg)) && !argPart) {
+        arr.push(arg);
+      } else {
+        argPart = argPart ? argPart + " " + arg : arg;
+        // If part is complete (ends with a double quote), we can add it to the array
+        if (/"$/.test(argPart)) {
+          arr.push(argPart);
+          argPart = null;
+        }
+      }
+    });
+    return arr;
+  }
 
 /// Cmake process helpers
 
@@ -26,7 +48,10 @@ function config<T>(key: string, defaultValue?: any): T {
 // and return a promise with stdout
 let cmake = (args: string[]): Promise<string> => {
     return new Promise(function (resolve, reject) {
-        let cmd = child_process.spawn(config<string>('cmakePath', 'cmake'), args.map(arg => { return arg.replace(/\r/gm, ''); }));
+        let cmake_config = config<string>('cmakePath', 'cmake');
+        let cmake_args = commandArgs2Array(cmake_config)
+        let cmd = child_process.spawn(cmake_args[0], cmake_args.slice(1, cmake_args.length)
+                .concat(args.map(arg => { return arg.replace(/\r/gm, ''); })));
         let stdout: string = '';
         cmd.stdout.on('data', function (data) {
             var txt: string = data.toString();
