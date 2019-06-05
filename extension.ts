@@ -354,7 +354,7 @@ class CMakeExtraInfoSupport implements HoverProvider {
             return promises[cmakeTypeFromvscodeKind(suggestion.kind)](suggestion.label).then(function (result: string) {
                 let lines = result.split('\n');
 
-                lines = lines.slice(2, Math.min(20, lines.length));
+                lines = lines.slice(2, Math.max(20, lines.length));
 
 
                 let hover = new Hover({ language: 'md', value: lines.join('\n') });
