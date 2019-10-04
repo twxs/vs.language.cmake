@@ -1,0 +1,44 @@
+instructions:
+
+- get keyword lists (syntax for windows cmd)
+    cmake --help-property-list > property_list.txt
+    cmake --help-command-list > command_list.txt
+    cmake --help-variable-list > variable_list.txt
+
+- remove blank lines (taken from https://stackoverflow.com/questions/31412765/regex-to-remove-white-spaces-blank-lines-and-final-line-break-in-javascript)
+    regex replace "^(?=\n)$|^\s*|\s*$|\n\n+" with ""
+
+- replace line feeds with carriage return + line feed + | (\r\n for windows, | for textmate regex)
+    replace "\n" with "\r\n|"
+
+replace variable string (i.e. <CONFIG>) with regex equivalent
+    regex replace "<[^\s]+>" with "\\w+"
+
+- copy generated keyword lists into relevent areas in .tmlanguage file
+    - preserve (?x) of regex to allow regex to span multiple lines (easier to track changes in git)
+    - preserve other special characters at start and end of regex to ensure it works
+
+limitations:
+
+- does not split variable between:
+    "Variables That Change Behavior"
+    "Variables That Describe the System"
+    "Variables that Control the Build"
+- so have put them all in new:
+    "Variables"
+
+- does not split properties between:
+    "Properties on Cache Entries"
+    "Properties on Source Files"
+    "Properties on Tests"
+    "Properties on Directories"
+    "Properties of Global Scope"
+    "Properties on Targets"
+- so have put them all in new
+    "Properties"
+
+- gave Properties name:
+    "variable.source.cmake"
+- instead of:
+    "entity.source.cmake"
+- because latter was just white
