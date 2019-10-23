@@ -299,10 +299,8 @@ export function activate(disposables: Disposable[]) {
 
     languages.setLanguageConfiguration(CMAKE_LANGUAGE, {
         indentationRules: {
-            // ^(.*\*/)?\s*\}.*$
-            decreaseIndentPattern: /^(.*\*\/)?\s*\}.*$/,
-            // ^.*\{[^}"']*$
-            increaseIndentPattern: /^.*\{[^}"']*$/
+            decreaseIndentPattern: /^(?!#)\s*(\b(elseif|else|endif|endforeach|endfunction|endmacro)\s*\([^)]*\)|[^{]*\}|[^()]*\)\s*)$/i,
+            increaseIndentPattern: /^((?!#).)*(\b(if|else|elseif|foreach|function|macro)\s*\([^)]*\)|\{[^}\"'`]*|\([^)\"'`]*)$/i
         },
         wordPattern: /(-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g,
         comments: {
