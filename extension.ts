@@ -478,6 +478,22 @@ function cmModulesSuggestionsExact(currentWord: string): Thenable<CompletionItem
     return suggestionsHelper(cmd, currentWord, 'module', cmModuleInsertText, strEquals);
 }
 
+function wordSuggestions(document: TextDocument, currentWord: string): Thenable<CompletionItem[]> {
+    return new Promise(function(resolve, reject) {
+        let suggestions = new Array<CompletionItem>();
+        let re = new RegExp('(\\b' + currentWord + '\\w+)', 'g');
+        let matches = document.getText().match(re);
+        let uniqueMatches = new Set<string>();
+        for (let match of matches) {
+            uniqueMatches.add(match);
+        }
+        for (let match of uniqueMatches) {
+            suggestions.push(new CompletionItem(match, CompletionItemKind.Variable));
+        }
+        return resolve(suggestions);
+    });
+}
+
 class CMakeSuggestionSupport implements CompletionItemProvider {
     public triggerCharacters: string[];
     public excludeTokens: string[] = ['string', 'comment', 'numeric'];
@@ -499,7 +515,16 @@ class CMakeSuggestionSupport implements CompletionItemProvider {
                 cmModulesSuggestions(currentWord)
             ]).then(function (results) {
                 var suggestions = Array.prototype.concat.apply([], results);
-                resolve(suggestions);
+                wordSuggestions(document, currentWord).then(function (results) {
+                    for (let result of results) {
+                        if (!suggestions.find(function (el){
+                            return el.label == result.label;
+                        })){
+                            suggestions.push(result);
+                        }
+                    }
+                    resolve(suggestions);
+                });
             }).catch(err => { reject(err); });
         });
     }
