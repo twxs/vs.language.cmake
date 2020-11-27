@@ -97,11 +97,11 @@
 	"dependencies": {
 		"opener": "^1.4.2"
 	},
-    "devDependencies": {
-        "typescript": "^2.0.9",
-        "vscode": "^1.0.3",
-        "@types/node": "^6.0.47",
-        "mocha": "^3.1.2",
-        "@types/mocha": "^2.2.33"
-    }
+	"devDependencies": {
+		"@types/mocha": "^2.2.33",
+		"@types/node": "^6.0.47",
+		"mocha": "^3.1.2",
+		"typescript": "^3.0.0",
+		"vscode": "^1.0.3"
+	}
 }
