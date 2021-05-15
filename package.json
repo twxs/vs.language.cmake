@@ -1,6 +1,6 @@
 {
 	"name": "cmake",
-	"version": "0.0.17",
+	"version": "0.0.18",
 	"publisher": "twxs",
 	"displayName": "CMake",
 	"description": "CMake language support for Visual Studio Code",
@@ -11,23 +11,24 @@
 		"type": "git",
 		"url": "https://github.com/twxs/vs.language.cmake.git"
 	},
-
 	"bugs": {
-        "url": "https://github.com/twxs/vs.language.cmake/issues"
-    },
+		"url": "https://github.com/twxs/vs.language.cmake/issues"
+	},
 	"homepage": "https://github.com/twxs/vs.language.cmake/blob/master/README.md",
 	"keywords": [
 		"CMake",
 		"Syntax"
 	],
 	"categories": [
-        "Languages", "Snippets", "Other"
-    ],
+		"Programming Languages",
+		"Snippets",
+		"Other"
+	],
 	"icon": "images/icon.png",
 	"galleryBanner": {
-        "color": "#5c2d91",
-        "theme": "dark"
-    },
+		"color": "#5c2d91",
+		"theme": "dark"
+	},
 	"license": "MIT",
 	"activationEvents": [
 		"onLanguage:cmake"
@@ -82,26 +83,26 @@
 			"title": "CMake configuration",
 			"properties": {
 				"cmake.cmakePath": {
-                    "type": "string",
-                    "default": "cmake",
-                    "description": "The path to CMake generator executable"
-                }
+					"type": "string",
+					"default": "cmake",
+					"description": "The path to CMake generator executable"
+				}
 			}
 		}
 	},
 	"scripts": {
-        "vscode:prepublish": "tsc -p ./",
-        "compile": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install"
-    },
+		"vscode:prepublish": "tsc -p ./",
+		"compile": "tsc -watch -p ./",
+		"postinstall": "node ./node_modules/vscode/bin/install"
+	},
 	"dependencies": {
 		"opener": "^1.4.2"
 	},
-    "devDependencies": {
-        "typescript": "^2.0.9",
-        "vscode": "^1.0.3",
-        "@types/node": "^6.0.47",
-        "mocha": "^3.1.2",
-        "@types/mocha": "^2.2.33"
-    }
+	"devDependencies": {
+		"@types/mocha": "^2.2.33",
+		"@types/node": "^6.0.47",
+		"mocha": "^3.1.2",
+		"typescript": "^3.0.0",
+		"vscode": "^1.0.3"
+	}
 }
