@@ -11,29 +11,30 @@
 		"type": "git",
 		"url": "https://github.com/twxs/vs.language.cmake.git"
 	},
-
 	"bugs": {
-        "url": "https://github.com/twxs/vs.language.cmake/issues"
-    },
+		"url": "https://github.com/twxs/vs.language.cmake/issues"
+	},
 	"homepage": "https://github.com/twxs/vs.language.cmake/blob/master/README.md",
 	"keywords": [
 		"CMake",
 		"Syntax"
 	],
 	"categories": [
-        "Languages", "Snippets", "Other"
-    ],
+		"Languages",
+		"Snippets",
+		"Other"
+	],
 	"icon": "images/icon.png",
 	"galleryBanner": {
-        "color": "#5c2d91",
-        "theme": "dark"
-    },
+		"color": "#5c2d91",
+		"theme": "dark"
+	},
 	"license": "MIT",
 	"activationEvents": [
 		"onLanguage:cmake"
 	],
 	"engines": {
-		"vscode": "^1.10.0"
+		"vscode": "^1.83.1"
 	},
 	"main": "./out/extension",
 	"contributes": {
@@ -82,26 +83,28 @@
 			"title": "CMake configuration",
 			"properties": {
 				"cmake.cmakePath": {
-                    "type": "string",
-                    "default": "cmake",
-                    "description": "The path to CMake generator executable"
-                }
+					"type": "string",
+					"default": "cmake",
+					"description": "The path to CMake generator executable"
+				}
 			}
 		}
 	},
 	"scripts": {
-        "vscode:prepublish": "tsc -p ./",
-        "compile": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install"
-    },
-	"dependencies": {
-		"opener": "^1.4.2"
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./"
 	},
-    "devDependencies": {
-        "typescript": "^2.0.9",
-        "vscode": "^1.0.3",
-        "@types/node": "^6.0.47",
-        "mocha": "^3.1.2",
-        "@types/mocha": "^2.2.33"
-    }
+	"dependencies": {
+		"opener": "^1.5.2"
+	},
+	"devDependencies": {
+		"@types/mocha": "^2.2.48",
+		"@types/node": "^8.10.66",
+		"@types/vscode": "^1.83.1",
+		"@vscode/test-electron": "^2.3.6",
+		"mocha": "^10.2.0",
+		"tslint": "^6.1.3",
+		"typescript": "^5.2.2"
+	}
 }
